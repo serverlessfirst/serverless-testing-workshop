@@ -5,7 +5,7 @@ This exercise is focused on identifying failure modes and test cases for specifi
 2. [ ] Fill out the worksheet templates below for the following 2 application use cases. Some items have already been filled out to get you started:
     - [ ] **Create new Club and set as public/private**
     - [ ] **List all Clubs marked as public**
-3. [ ] Create a Pull Request in your private repository containing your changes to this file, tagging [paulswail](https://github.com/paulswail) as a reviewer.
+3. [ ] Create a Pull Request in your private repository containing your changes to this file, tagging your instructor as a reviewer.
 
 Some hints for completing the worksheets:
 - Think in terms of both the business logic and the deployment infrastructure when considering failure modes
