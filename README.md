@@ -13,7 +13,7 @@ Follow these steps to create your copy:
 1. Create a new repository using the [GitHub UI](https://github.com/new). Set it to **Private** and name it `serverless-testing-workshop-student`.
 2. Push the content of the public repo to your new repo using the following terminal command, making sure to replace "{yourname}" with your GitHub username:
     ```sh
-    git clone --bare https://github.com/WinterWindSoftware/serverless-testing-workshop.git
+    git clone --bare https://github.com/serverlessfirst/serverless-testing-workshop.git
     cd serverless-testing-workshop.git
     git push --mirror https://github.com/{yourname}/serverless-testing-workshop-student.git
     cd ..
@@ -28,7 +28,7 @@ Follow these steps to create your copy:
 ### Sync updates into your private copy
 New code may be added to the public repo during the course of the workshop. In order to sync changes into your private copy, run the following command inside your local `serverless-testing-workshop-student` directory:
 ```sh
-git remote add public https://github.com/WinterWindSoftware/serverless-testing-workshop.git
+git remote add public https://github.com/serverlessfirst/serverless-testing-workshop.git
 git pull public master # Creates a merge commit
 git push origin master
 ```
