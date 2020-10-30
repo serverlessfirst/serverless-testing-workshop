@@ -2,9 +2,9 @@
 This exercise is focused on identifying failure modes and test cases for specific use cases within the sample Sports Club Manager app.
 
 1. [ ] Read through the [AWS architecture and use cases](../docs/app-use-cases.md) for the sample app.
-2. [ ] Fill out the worksheet templates below for the following 2 application use cases (some items have already been filled out to get you started):
-    - [ ] *Create new Club and set as public/private*
-    - [ ] *List all Clubs marked as public*
+2. [ ] Fill out the worksheet templates below for the following 2 application use cases. Some items have already been filled out to get you started:
+    - [ ] **Create new Club and set as public/private**
+    - [ ] **List all Clubs marked as public**
 3. [ ] Create a Pull Request in your private repository containing your changes to this file, tagging [paulswail](https://github.com/paulswail) as a reviewer.
 
 Some hints for completing the worksheets:
@@ -20,7 +20,7 @@ Some hints for completing the worksheets:
 HTTP request: `POST /clubs`
 
 ### Failure modes
-What could go wrong?
+What could go wrong with this API endpoint?
 - An unauthenticated user is allowed to create a club
 - The API doesn't respond to the correct HTTP path and verb
 - TODO: add more failure modes
@@ -64,7 +64,7 @@ What could go wrong?
 HTTP request: `GET /clubs`
 
 ### Failure modes
-What could go wrong?
+What could go wrong with this API endpoint?
 - TODO: add more failure modes
 
 ### E2E test cases
