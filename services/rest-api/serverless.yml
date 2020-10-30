@@ -1,0 +1,45 @@
+service: ${self:custom.appName}-restapi
+
+provider:
+    name: aws
+    region: ${file(../../common/infra/provider-settings.yml):region}
+    runtime: ${file(../../common/infra/provider-settings.yml):runtime}
+    stage: ${file(../../common/infra/provider-settings.yml):stage}
+    logRetentionInDays: ${file(../../common/infra/provider-settings.yml):logRetentionInDays}
+    environment:
+        STAGE: ${self:provider.stage}
+        REGION: ${self:provider.region}
+        API_GW_DOMAIN: !Ref ApiGatewayRestApi
+
+custom:
+    appName: ${file(../../common/infra/provider-settings.yml):appName}
+    infraStack: ${self:custom.appName}-infra-${self:provider.stage}
+    webpack:
+        includeModules: false
+    corsConfig: true
+
+package:
+    individually: true
+
+functions:
+
+    # =================================================================
+    # API Gateway handlers
+    # =================================================================
+
+    # === /me
+    httpMeGet:
+        handler: src/http/me/index.get
+        events:
+        - http:
+            path: /me
+            method: get
+            # authorizer: ${self:custom.apiAuthorizer}
+            cors: ${self:custom.corsConfig}
+
+# resources:
+
+plugins:
+- serverless-webpack
+- serverless-export-env
+- serverless-iam-roles-per-function

@@ -1,0 +1,11 @@
+Resources:
+    ServiceBus:
+        Type: AWS::Events::EventBus
+        Properties:
+            Name: ${self:custom.appName}-service-bus
+
+Outputs:
+    ServiceBus:
+        Value: !Ref ServiceBus
+    ServiceBusArn:
+        Value: !GetAtt ServiceBus.Arn

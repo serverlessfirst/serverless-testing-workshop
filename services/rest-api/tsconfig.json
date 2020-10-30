@@ -1,0 +1,24 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "paths": {
+      "@svc/*": [
+        "./src/*"
+      ],
+      "@common/*": [
+        "../../common/src/*"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "tests/**/*.ts",
+    "../../common/src/**/*.ts"
+  ],
+  "exclude": [
+    "./dist"
+  ]
+}

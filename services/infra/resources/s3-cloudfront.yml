@@ -1,0 +1,14 @@
+Resources:
+    MediaBucket:
+        Type: AWS::S3::Bucket
+        Properties:
+            AccessControl: Private
+            CorsConfiguration:
+                CorsRules:
+                -   AllowedHeaders: ['*']
+                    AllowedMethods: ['PUT']
+                    AllowedOrigins: ['*']
+
+Outputs:
+    MediaBucket:
+        Value: !Ref MediaBucket

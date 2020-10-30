@@ -1,0 +1,5 @@
+{
+    "terminal.integrated.env.osx": {
+        "AWS_PROFILE": "testing-workshop-student"
+    }
+}

@@ -1,0 +1,57 @@
+# Stack containing core shared infrastructure resources.
+service: ${self:custom.appName}-infra
+
+provider:
+    name: aws
+    region: ${file(../../common/infra/provider-settings.yml):region}
+    runtime: ${file(../../common/infra/provider-settings.yml):runtime}
+    stage: ${file(../../common/infra/provider-settings.yml):stage}
+    logRetentionInDays: ${file(../../common/infra/provider-settings.yml):logRetentionInDays}
+    environment:
+        STAGE: ${self:provider.stage}
+    stackPolicy:
+    -   Effect: Allow
+        Principal: '*'
+        Action: 'Update:*'
+        Resource: '*'
+    # Prevent CloudFormation from replacing or deleting DynamoDB tables
+    -   Effect: Deny
+        Principal: '*'
+        Resource: '*'
+        Condition:
+            StringEquals:
+                ResourceType:
+                    - AWS::DynamoDB::Table
+        Action:
+            - Update:Replace
+
+custom:
+    appName: ${file(../../common/infra/provider-settings.yml):appName}
+    dynamoDbTablePrefix: ${self:custom.appName}-${self:provider.stage}
+    snsTopicPrefix: ${self:custom.appName}-${self:provider.stage}
+    webpack:
+        includeModules: false
+    deletionPolicy:
+        personal: Delete
+        dev: Delete
+        prod: Retain
+
+package:
+    individually: true
+
+resources:
+    - ${file(resources/s3-cloudfront.yml)}
+    - ${file(resources/dynamodb-tables.yml)}
+    - ${file(resources/eventbridge-resources.yml)}
+    - Outputs:
+        AWSAccountId:
+            Value: !Ref 'AWS::AccountId'
+        DynamoDBTablePrefix:
+            Value: ${self:custom.dynamoDbTablePrefix}
+        SNSTopicPrefix:
+            Value: ${self:custom.snsTopicPrefix}
+
+functions:
+
+plugins:
+- serverless-export-env
