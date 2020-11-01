@@ -1,4 +1,4 @@
-# Week 1 Worksheet
+# Week 1 Exercise
 This exercise is focused on identifying failure modes and test cases for specific use cases within the sample Sports Club Manager app.
 
 1. [ ] Read through the [AWS architecture and use cases](../docs/app-use-cases.md) for the sample app.
@@ -15,6 +15,8 @@ Some hints for completing the worksheets:
 - Don't worry if you don't get time to complete both use cases. Just submit what you can get done in the time you have.
 
 ---
+# Week 1 Worksheet
+Fill out the template below for both use cases, replacing all "TODO"s and adding new test cases as appropriate.
 
 ## Use Case 1: Create New Club
 HTTP request: `POST /clubs`
