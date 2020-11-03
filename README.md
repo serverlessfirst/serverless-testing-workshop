@@ -24,6 +24,7 @@ Follow these steps to create your copy:
     git clone https://github.com/{yourname}/serverless-testing-workshop-student.git
     cd serverless-testing-workshop-student
     ```
+4. In your private repo add your instructor (GitHub username "paulswail") as a collaborator so that they can review your pull requests as part of the exercises. [Instructions here](https://docs.github.com/en/free-pro-team@latest/github/setting-up-and-managing-your-github-user-account/inviting-collaborators-to-a-personal-repository).
 
 ### Sync updates into your private copy
 New code may be added to the public repo during the course of the workshop. In order to sync changes into your private copy, run the following command inside your local `serverless-testing-workshop-student` directory:
