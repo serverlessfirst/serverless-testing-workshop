@@ -6,17 +6,30 @@ provider:
     runtime: ${file(../../common/infra/provider-settings.yml):runtime}
     stage: ${file(../../common/infra/provider-settings.yml):stage}
     logRetentionInDays: ${file(../../common/infra/provider-settings.yml):logRetentionInDays}
+    httpApi:
+        authorizers:
+            cognitoJwtAuthorizer:
+                identitySource: $request.header.Authorization
+                issuerUrl: https://cognito-idp.${self:provider.region}.amazonaws.com/${cf:${self:custom.infraStack}.UserPoolId}
+                audience:
+                - ${cf:${self:custom.infraStack}.UserPoolClientId}
     environment:
         STAGE: ${self:provider.stage}
         REGION: ${self:provider.region}
-        API_GW_DOMAIN: !Ref ApiGatewayRestApi
+        API_GW_DOMAIN: !Ref HttpApi
+        COGNITO_USER_POOL_ID: ${cf:${self:custom.infraStack}.UserPoolId}
+        COGNITO_USER_POOL_CLIENT_ID: ${cf:${self:custom.infraStack}.UserPoolClientId}
+        DDB_TABLE_CLUBS: ${cf:${self:custom.infraStack}.DDBTableClubs}
+        DDB_TABLE_MEMBERS: ${cf:${self:custom.infraStack}.DDBTableMembers}
 
 custom:
     appName: ${file(../../common/infra/provider-settings.yml):appName}
     infraStack: ${self:custom.appName}-infra-${self:provider.stage}
+    awsAccountId: ${cf:${self:custom.infraStack}.AWSAccountId}
     webpack:
         includeModules: false
-    corsConfig: true
+    defaultApiAuthorizer:
+        name: cognitoJwtAuthorizer
 
 package:
     individually: true
@@ -29,13 +42,26 @@ functions:
 
     # === /me
     httpMeGet:
-        handler: src/http/me/index.get
+        handler: src/handlers/http/me/index.get
         events:
-        - http:
-            path: /me
-            method: get
-            # authorizer: ${self:custom.apiAuthorizer}
-            cors: ${self:custom.corsConfig}
+        -   httpApi:
+                path: /me
+                method: GET
+                authorizer: ${self:custom.defaultApiAuthorizer}
+
+    # === /clubs
+    httpClubsGet:
+        handler: src/handlers/http/clubs/index.get
+        iamRoleStatements:
+        -   Effect: Allow
+            Action:
+                - dynamodb:Query
+            Resource:
+                - arn:aws:dynamodb:${self:provider.region}:${self:custom.awsAccountId}:table/${cf:${self:custom.infraStack}.DDBTableClubs}*
+        events:
+        -   httpApi:
+                path: /clubs
+                method: GET
 
 # resources:
 

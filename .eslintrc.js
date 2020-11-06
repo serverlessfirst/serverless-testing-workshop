@@ -33,7 +33,6 @@ module.exports = {
     'no-nested-ternary': ['off'],
     'prefer-destructuring': 'off',
     '@typescript-eslint/no-use-before-define': ['error', { functions: false, classes: false }],
-    'import/prefer-default-export': ['off'],
     'arrow-parens': ['error', 'as-needed', { requireForBlockBody: true }],
     'function-paren-newline': ['error', 'consistent'],
     'max-len': ['error', {
@@ -41,6 +40,8 @@ module.exports = {
     }],
     '@typescript-eslint/no-non-null-assertion': 'off',
     'linebreak-style': 'off',
+    'import/prefer-default-export': ['off'],
+    'import/no-extraneous-dependencies': ['error', { 'devDependencies': ['**/tests/**', 'scripts/**'] }],
   },
   settings: {
     // Allow individual service folders to provide their own aliases for absolute imports

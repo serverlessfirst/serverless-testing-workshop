@@ -1,0 +1,46 @@
+Resources:
+    CognitoUserPool:
+        Type: AWS::Cognito::UserPool
+        Properties:
+            UserPoolName: ${self:custom.appName}-users-${self:provider.stage}
+            Policies:
+                PasswordPolicy:
+                    MinimumLength: 12
+                    RequireLowercase: true
+                    RequireNumbers: true
+                    RequireSymbols: true
+                    RequireUppercase: true
+
+    CognitoUserPoolWebClient:
+        Type: "AWS::Cognito::UserPoolClient"
+        DeletionPolicy: Retain
+        Properties:
+            ClientName: ${self:custom.appName}-webclient-${self:provider.stage}
+            GenerateSecret: false
+            UserPoolId: !Ref CognitoUserPool
+            ExplicitAuthFlows:
+                - USER_PASSWORD_AUTH
+
+    CognitoIdentityPool:
+        Type: AWS::Cognito::IdentityPool
+        Properties:
+            IdentityPoolName: ${self:custom.appName}_${self:provider.stage}
+            AllowUnauthenticatedIdentities: false
+            CognitoIdentityProviders:
+            -   ClientId: !Ref CognitoUserPoolWebClient
+                ProviderName:
+                    Fn::GetAtt: [ "CognitoUserPool", "ProviderName" ]
+
+Outputs:
+    UserPoolId:
+        Description: ID of the User Pool
+        Value: !Ref CognitoUserPool
+    UserPoolArn:
+        Description: ARN of the User Pool
+        Value: !GetAtt CognitoUserPool.Arn
+    UserPoolClientId:
+        Description: ID of the User Pool Client
+        Value: !Ref CognitoUserPoolWebClient
+    IdentityPoolId:
+        Description: ID of the IdentityPool
+        Value: !Ref CognitoIdentityPool

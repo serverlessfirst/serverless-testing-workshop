@@ -1,5 +1,11 @@
 {
     "terminal.integrated.env.osx": {
         "AWS_PROFILE": "testing-workshop-student"
+    },
+    "terminal.integrated.env.windows": {
+        "AWS_PROFILE": "testing-workshop-student"
+    },
+    "terminal.integrated.env.linux": {
+        "AWS_PROFILE": "testing-workshop-student"
     }
 }

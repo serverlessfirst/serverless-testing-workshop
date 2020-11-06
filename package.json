@@ -5,16 +5,17 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint . --ext .ts,.tsx",
-    "watch": "concurrently 'npm:infra:watch' 'npm:rest-api:watch'",
+    "tsc": "npm run rest-api:tsc",
     "infra:deploy": "cd ./services/infra && STAGE=${STAGE:=dev} && sls deploy -s $STAGE",
-    "infra:watch": "cd ./services/infra && tsc -w",
-    "rest-api:watch": "cd ./services/rest-api && tsc -w",
+    "infra:tsc": "cd ./services/infra && tsc -w",
+    "rest-api:tsc": "cd ./services/rest-api && tsc -w",
     "rest-api:dotenv": "cd ./services/rest-api && STAGE=${STAGE:=dev} && sls export-env -s $STAGE",
     "rest-api:deploy": "cd ./services/rest-api && STAGE=${STAGE:=dev} && sls deploy -s $STAGE",
-    "test-unit": "cd ./services/rest-api && jest --testPathPattern=tests/unit -c jest.config.unit.js",
+    "rest-api:deploy-test": "npm run rest-api:deploy && npm run rest-api:dotenv && npm run test-e2e",
     "env": "npm run rest-api:dotenv",
-    "test-integration": "cd ./services/rest-api && jest --testPathPattern=tests/integration -c jest.config.integration.js",
-    "test-e2e": "cd ./services/rest-api && jest --testPathPattern=tests/e2e"
+    "test-unit": "cd ./services/rest-api && jest -c jest.config.unit.js",
+    "test-integration": "cd ./services/rest-api && jest -c jest.config.integration.js",
+    "test-e2e": "cd ./services/rest-api && jest -c jest.config.e2e.js"
   },
   "keywords": [
     "serverless",
@@ -30,6 +31,7 @@
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.64",
+    "@types/faker": "^5.1.4",
     "@types/jest": "^26.0.15",
     "@types/node": "^14.14.0",
     "@types/uuid": "^8.3.0",
@@ -42,8 +44,9 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jsx-a11y": "^6.3.1",
     "eslint-plugin-react": "^7.21.5",
+    "faker": "^5.1.0",
     "jest": "^26.6.0",
-    "serverless": "^2.8.0",
+    "serverless": "2.4.0",
     "serverless-export-env": "^1.4.0",
     "serverless-iam-roles-per-function": "^2.0.2",
     "serverless-webpack": "^5.3.5",
