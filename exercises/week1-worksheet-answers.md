@@ -124,15 +124,15 @@ What could go wrong with this API endpoint?
 
 
 ### Integration test cases
-- Clubs can be listed
+- Private clubs are not returned
   - **Arrange** steps:
-    - Construct the `event` parameter to contain the correct API GW request fields and values for the `GET /clubs` request.
+    - Create 6 clubs in DynamoDB, 3 public and 3 private.
+    - Construct the `event` parameter (no body or query string needed).
   - **Act** steps:
     - Invoke the Lambda function with the event.
   - **Assert** steps:
     - Verify that the Lambda invocation succeeded and the response is 200 OK.
     - Verify that the Lambda response contains all public clubs.
-    - Verify that none of the clubs are private.
 - Return limited size pages of club results:
     - **Arrange** steps:
         - Create more than a page's worth of valid clubs in a loop and store in database
