@@ -1,58 +1,49 @@
 Resources:
-    # Main table for storing the core entities in the app (uses single table overloaded index design)
-    MainTable:
+    ClubsTable:
         Type: AWS::DynamoDB::Table
         DeletionPolicy: ${self:custom.deletionPolicy.${self:provider.stage}}
         UpdateReplacePolicy: Retain
         Properties:
-            TableName: ${self:custom.dynamoDbTablePrefix}-main
-            StreamSpecification:
-                StreamViewType: NEW_AND_OLD_IMAGES
+            TableName: ${self:custom.dynamoDbTablePrefix}-clubs
             BillingMode: PAY_PER_REQUEST
             AttributeDefinitions:
-            -   AttributeName: pk
+            -   AttributeName: id
                 AttributeType: S
-            -   AttributeName: sk
-                AttributeType: S
-            -   AttributeName: gs1pk
-                AttributeType: S
-            -   AttributeName: gs1sk
-                AttributeType: S
-            -   AttributeName: gs2pk
-                AttributeType: S
-            -   AttributeName: gs2sk
+            -   AttributeName: visibility
                 AttributeType: S
             KeySchema:
-            -   AttributeName: pk
+            -   AttributeName: id
                 KeyType: HASH
-            -   AttributeName: sk
-                KeyType: RANGE
             GlobalSecondaryIndexes:
-            -   IndexName: InvertedIndex
+            -   IndexName: ClubsByVisibility
                 KeySchema:
-                -   AttributeName: sk
+                -   AttributeName: visibility
                     KeyType: HASH
-                -   AttributeName: pk
-                    KeyType: RANGE
-                Projection:
-                    ProjectionType: ALL
-            -   IndexName: gs1
-                KeySchema:
-                -   AttributeName: gs1pk
-                    KeyType: HASH
-                -   AttributeName: gs1sk
-                    KeyType: RANGE
-                Projection:
-                    ProjectionType: ALL
-            -   IndexName: gs2
-                KeySchema:
-                -   AttributeName: gs2pk
-                    KeyType: HASH
-                -   AttributeName: gs2sk
+                -   AttributeName: id
                     KeyType: RANGE
                 Projection:
                     ProjectionType: ALL
 
+    MembersTable:
+        Type: AWS::DynamoDB::Table
+        DeletionPolicy: ${self:custom.deletionPolicy.${self:provider.stage}}
+        UpdateReplacePolicy: Retain
+        Properties:
+            TableName: ${self:custom.dynamoDbTablePrefix}-members
+            BillingMode: PAY_PER_REQUEST
+            AttributeDefinitions:
+            -   AttributeName: clubId
+                AttributeType: S
+            -   AttributeName: userId
+                AttributeType: S
+            KeySchema:
+            -   AttributeName: clubId
+                KeyType: HASH
+            -   AttributeName: userId
+                KeyType: RANGE
+
 Outputs:
-    DDBTableMain:
-        Value: !Ref MainTable
+    DDBTableClubs:
+        Value: !Ref ClubsTable
+    DDBTableMembers:
+        Value: !Ref MembersTable

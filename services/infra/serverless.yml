@@ -43,6 +43,7 @@ resources:
     - ${file(resources/s3-cloudfront.yml)}
     - ${file(resources/dynamodb-tables.yml)}
     - ${file(resources/eventbridge-resources.yml)}
+    - ${file(resources/cognito-resources.yml)}
     - Outputs:
         AWSAccountId:
             Value: !Ref 'AWS::AccountId'

@@ -4,12 +4,12 @@ const { compilerOptions } = require('./tsconfig');
 const moduleNameMapper = pathsToModuleNameMapper(compilerOptions.paths, { prefix: '<rootDir>/' });
 
 module.exports = {
+  testRegex: '/tests/unit/',
   moduleNameMapper,
   roots: ['<rootDir>'],
   transform: {
     '^.+\\.ts$': 'ts-jest',
   },
-  testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$',
   testEnvironment: 'node',
   moduleFileExtensions: [
     'ts',

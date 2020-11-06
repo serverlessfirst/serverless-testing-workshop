@@ -8,6 +8,9 @@
       "@svc/*": [
         "./src/*"
       ],
+      "@tests/*": [
+        "./tests/*"
+      ],
       "@common/*": [
         "../../common/src/*"
       ]
