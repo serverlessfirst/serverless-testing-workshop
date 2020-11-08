@@ -48,9 +48,6 @@ Install all NPM packages for each service by running the following in the root f
 npm install
 ```
 
-### Configuration
-TODO do any env files needs to be set or secrets pushed to SSM Param Store?
-
 ### Deploy services to AWS
 Open a new terminal window and run the following:
 ```sh
