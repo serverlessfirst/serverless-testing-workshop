@@ -39,6 +39,14 @@ functions:
     # =================================================================
     # API Gateway handlers
     # =================================================================
+    # === /me
+    httpMeGet:
+        handler: src/handlers/http/me/index.get
+        events:
+        -   httpApi:
+                path: /me
+                method: GET
+                authorizer: ${self:custom.defaultApiAuthorizer}
 
     # === /clubs
     httpClubsGet:

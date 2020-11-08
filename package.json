@@ -13,9 +13,10 @@
     "rest-api:deploy": "cd ./services/rest-api && STAGE=${STAGE:=dev} && sls deploy -s $STAGE",
     "rest-api:deploy-test": "npm run rest-api:deploy && npm run rest-api:dotenv && npm run test-e2e",
     "env": "npm run rest-api:dotenv",
+    "test": "npm run test-unit",
     "test-unit": "cd ./services/rest-api && jest -c jest.config.unit.js",
-    "test-integration": "cd ./services/rest-api && jest -c jest.config.integration.js",
-    "test-e2e": "cd ./services/rest-api && jest -c jest.config.e2e.js"
+    "test-integration": "cd ./services/rest-api && TEST_MODE=LOCAL_HANDLER jest -c jest.config.integration.js -t '^(?!.*(\\[e2e\\])).*$'",
+    "test-e2e": "cd ./services/rest-api && TEST_MODE=REMOTE_TRIGGER jest -c jest.config.e2e.js -t '^(?!.*(\\[integration\\])).*$'"
   },
   "keywords": [
     "serverless",

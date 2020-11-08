@@ -44,14 +44,14 @@ export type ApiGatewayInvokerHandler =
 
 export interface ApiGatewayHandlerInvokerOptions {
   invocationMode?: InvocationMode;
-  baseUrl: string;
+  baseUrl?: string;
   handler?: ApiGatewayInvokerHandler;
 }
 
 export class ApiGatewayHandlerInvoker {
   readonly invocationMode: InvocationMode;
 
-  readonly baseUrl: string;
+  readonly baseUrl?: string;
 
   static validModes = Object.values(InvocationMode);
 
@@ -113,7 +113,12 @@ export class ApiGatewayHandlerInvoker {
           },
         }),
       },
-      headers: invocation.event.headers || {},
+      headers: {
+        ...invocation.event.headers,
+        ...(invocation.userContext?.idToken && {
+          Authorization: invocation.userContext.idToken,
+        }),
+      },
       body: (typeof invocation.event.body === 'object' ? JSON.stringify(invocation.event.body) : invocation.event.body) || null,
       pathParameters: invocation.event.pathParameters,
       queryStringParameters: invocation.event.queryStringParameters,
@@ -139,7 +144,7 @@ export class ApiGatewayHandlerInvoker {
     };
     const response = await this.handler!(event as any as APIGatewayProxyEventV2, context);
     const contentType = _get(response, 'headers.Content-Type', 'application/json');
-    if (response.body && contentType === 'application/json') {
+    if (response?.body && contentType === 'application/json') {
       try {
         response.body = JSON.parse(response.body);
       } catch (error) {
@@ -155,7 +160,7 @@ export class ApiGatewayHandlerInvoker {
       url: parsePath(invocation.event.pathTemplate, invocation.event.pathParameters),
       headers: {
         ...invocation.event.headers,
-        ...(invocation.userContext && {
+        ...(invocation.userContext?.idToken && {
           Authorization: invocation.userContext.idToken,
         }),
       },
@@ -165,7 +170,7 @@ export class ApiGatewayHandlerInvoker {
       data: invocation.event.body,
     };
     try {
-      const res = await this.axiosClient(req);
+      const res = await this.axiosClient.request(req);
       return {
         statusCode: res.status,
         body: res.data,
