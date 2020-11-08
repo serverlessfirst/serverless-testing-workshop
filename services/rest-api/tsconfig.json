@@ -22,6 +22,7 @@
     "../../common/src/**/*.ts"
   ],
   "exclude": [
-    "./dist"
+    "./dist",
+    "tests/lesson-examples/**"
   ]
 }

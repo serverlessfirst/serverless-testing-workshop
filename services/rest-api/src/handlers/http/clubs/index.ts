@@ -1,11 +1,12 @@
 import { listClubsByVisibility } from '@svc/lib/repos/clubs-repo';
 import { ClubVisibility } from '@svc/lib/types/sports-club-manager';
 import log from '@dazn/lambda-powertools-logger';
+import { APIGatewayProxyEventV2 } from 'aws-lambda';
 
 /**
  * Lambda handler for `GET /clubs` endpoint.
  */
-export const get = async (event: any) => {
+export const get = async (event: APIGatewayProxyEventV2) => {
   // Parse options from querystring
   const options = {
     ...(event.queryStringParameters?.limit && {
