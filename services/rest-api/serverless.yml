@@ -47,6 +47,19 @@ functions:
                 path: /me
                 method: GET
                 authorizer: ${self:custom.defaultApiAuthorizer}
+    httpMeClubsGet:
+        handler: src/handlers/http/me/clubs/index.get
+        events:
+        -   httpApi:
+                path: /me/clubs
+                method: GET
+                authorizer: ${self:custom.defaultApiAuthorizer}
+        iamRoleStatements:
+        -   Effect: Allow
+            Action:
+                - dynamodb:Query
+            Resource:
+                - arn:aws:dynamodb:${self:provider.region}:${self:custom.awsAccountId}:table/${cf:${self:custom.infraStack}.DDBTableClubs}*
 
     # === /clubs
     httpClubsGet:

@@ -11,6 +11,8 @@ Resources:
                 AttributeType: S
             -   AttributeName: visibility
                 AttributeType: S
+            -   AttributeName: managerId
+                AttributeType: S
             KeySchema:
             -   AttributeName: id
                 KeyType: HASH
@@ -18,6 +20,14 @@ Resources:
             -   IndexName: ClubsByVisibility
                 KeySchema:
                 -   AttributeName: visibility
+                    KeyType: HASH
+                -   AttributeName: id
+                    KeyType: RANGE
+                Projection:
+                    ProjectionType: ALL
+            -   IndexName: ClubsByManager
+                KeySchema:
+                -   AttributeName: managerId
                     KeyType: HASH
                 -   AttributeName: id
                     KeyType: RANGE

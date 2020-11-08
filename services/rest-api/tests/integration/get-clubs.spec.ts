@@ -17,6 +17,7 @@ describe('`GET /clubs` tests', () => {
       name: `PublicClub-${i}`,
       sport: 'Soccer',
       visibility: ClubVisibility.PUBLIC,
+      managerId: '123456789',
     };
   });
   const privateClubs: Club[] = _.times(3, (i) => {
@@ -25,6 +26,7 @@ describe('`GET /clubs` tests', () => {
       name: `PrivateClub-${i}`,
       sport: 'Soccer',
       visibility: ClubVisibility.PRIVATE,
+      managerId: '123456789',
     };
   });
 

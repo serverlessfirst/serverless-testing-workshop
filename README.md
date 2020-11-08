@@ -62,3 +62,31 @@ npm run infra:deploy
 ```sh
 npm run rest-api:deploy
 ```
+
+### Running tests
+#### Unit tests
+Only pre-req for running unit tests is `npm install`.
+
+Run them with: `npm run test-unit`.
+
+#### Integration tests
+Integration tests require that the `infra` stack has been deployed before running them.
+
+Run them with: `npm run test-integration`.
+
+#### E2E tests
+E2E tests require that both the `infra` and `rest-api` stacks have been deployed before running them.
+
+Run them with: `npm run test-e2e`.
+
+### Accessing CloudWatch logs for a Lambda function
+If we want to view logs for the Lambda function `httpClubsGet`, run the following command:
+```sh
+cd services/rest-api
+npx sls logs -f httpClubsGet
+```
+
+If you wish to tail the logs in the foreground of a terminal window, run:
+```sh
+npx sls logs -t -f httpClubsGet
+```

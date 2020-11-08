@@ -45,3 +45,15 @@ export const listClubsByVisibility = async (
     items: response.Items as Club[],
   };
 };
+
+export const listClubsForManager = async (managerId: string): Promise<Club[]> => {
+  const response = await ddb.query({
+    TableName: ddbConfig.clubsTable,
+    IndexName: 'ClubsByManager',
+    KeyConditionExpression: 'managerId = :managerId',
+    ExpressionAttributeValues: {
+      ':managerId': managerId,
+    },
+  }).promise();
+  return response.Items as Club[];
+};
