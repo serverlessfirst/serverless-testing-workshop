@@ -9,6 +9,7 @@ describe('club-validator', () => {
       name: 'MU',
       sport: 'Soccer',
       visibility: ClubVisibility.PRIVATE,
+      managerId: '123456789',
     };
     const result = validateClub(club);
     expect(result).toBe(false);
@@ -20,6 +21,7 @@ describe('club-validator', () => {
       name: '12345678901234567890123456789012345678901234567890123456789012345',
       sport: 'Soccer',
       visibility: ClubVisibility.PRIVATE,
+      managerId: '123456789',
     };
     const result = validateClub(club);
     expect(result).toBe(false);

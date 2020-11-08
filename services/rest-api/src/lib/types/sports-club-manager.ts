@@ -9,6 +9,9 @@ export interface Club {
   name: string;
   sport: string;
   visibility: ClubVisibility;
+
+  /** ID of the user who created the club */
+  managerId: string;
 }
 
 export interface UserProfile {
