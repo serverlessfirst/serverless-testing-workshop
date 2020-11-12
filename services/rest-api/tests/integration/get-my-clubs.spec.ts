@@ -19,7 +19,6 @@ const userManager = new TestUserManager({
 
 describe('`GET /me/clubs`', () => {
   let user1Context: AuthenticatedUser;
-  let user2Context: AuthenticatedUser;
   const createdClubs: Club[] = [];
 
   const deleteTestClubs = async () => {
@@ -28,13 +27,8 @@ describe('`GET /me/clubs`', () => {
   };
 
   beforeAll(async () => {
-    // Create 2 test users for use across multiple test cases
-    [user1Context, user2Context] = await userManager.createAndSignInUsers(2);
-  });
-
-  beforeEach(async () => {
-    // ensure empty db before each test
-    await deleteTestClubs();
+    // Create test user for use across multiple test cases
+    user1Context = await userManager.createAndSignInUser();
   });
 
   const createClubsForManager = async (managerId: string, clubIdPrefix: string, n = 3) => {
@@ -54,11 +48,10 @@ describe('`GET /me/clubs`', () => {
   };
 
   it('only returns current users clubs', async () => {
-    // Arrange: create 3 clubs for both users
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [user1Clubs, user2Clubs] = await Promise.all([
+    // Arrange: create 3 clubs for 2 users: the user being tested and another one
+    const [user1Clubs] = await Promise.all([
       createClubsForManager(user1Context.user.id, 'u1'),
-      createClubsForManager(user2Context.user.id, 'u2'),
+      createClubsForManager('anotherUserInSystem', 'an'),
     ]);
 
     // Act: invoke for user1
@@ -80,15 +73,16 @@ describe('`GET /me/clubs`', () => {
   });
 
   it('returns empty list whenever user has no clubs', async () => {
-    // Arrange - deleting all clubs is done in beforeEach handler
+    // Arrange - create new user with no clubs
+    const userContext = await userManager.createAndSignInUser();
 
-    // Act: invoke for user1
+    // Act: invoke for newUser
     const response = await apiInvoker.invoke({
       event: {
         pathTemplate: '/me/clubs',
         httpMethod: 'GET',
       },
-      userContext: user1Context,
+      userContext,
     });
 
     // Assert that no clubs come back
