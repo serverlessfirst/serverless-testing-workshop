@@ -1,5 +1,6 @@
 import { User } from '@svc/lib/types/sports-club-manager';
 import CognitoIdentityServiceProvider from 'aws-sdk/clients/cognitoidentityserviceprovider';
+import _ from 'lodash';
 import { generateTestUser, randomPassword } from './test-data-generator';
 
 /* eslint no-console: 0 */
@@ -52,6 +53,10 @@ export class TestUserManager {
     const password = randomPassword();
     const testUser = await this.createUser(password);
     return this.signInUser(testUser, password);
+  }
+
+  async createAndSignInUsers(n: number) {
+    return Promise.all(_.times(n, async () => this.createAndSignInUser()));
   }
 
   async signInUser(user: User, password: string) {
