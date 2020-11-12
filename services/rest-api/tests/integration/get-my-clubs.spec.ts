@@ -96,6 +96,16 @@ describe('`GET /me/clubs`', () => {
     expect(response.body.length).toEqual(0);
   });
 
+  it('returns 401 Unauthorized error if no auth token provided [e2e]', async () => {
+    const response = await apiInvoker.invoke({
+      event: {
+        pathTemplate: '/me/clubs',
+        httpMethod: 'GET',
+      },
+    });
+    expect(response.statusCode).toEqual(401);
+  });
+
   afterAll(async () => {
     await Promise.all([
       deleteTestClubs(),
