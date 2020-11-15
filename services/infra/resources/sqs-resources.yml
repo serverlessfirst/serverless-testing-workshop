@@ -1,0 +1,18 @@
+Resources:
+    # Standard processing queues
+    OutboundEmailsQueue:
+        Type: AWS::SQS::Queue
+        Properties:
+            RedrivePolicy:
+                deadLetterTargetArn: !GetAtt OutboundEmailsDLQ.Arn
+                maxReceiveCount: 10
+
+    # Dead Letter Queues
+    OutboundEmailsDLQ:
+        Type: AWS::SQS::Queue
+
+Outputs:
+    OutboundEmailsQueueUrl:
+        Value: !Ref OutboundEmailsQueue
+    OutboundEmailsQueueArn:
+        Value: !GetAtt OutboundEmailsQueue.Arn

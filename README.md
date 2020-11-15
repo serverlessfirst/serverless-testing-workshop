@@ -63,13 +63,21 @@ npm run infra:deploy
 npm run rest-api:deploy
 ```
 
+
 ### Running tests
+
 #### Unit tests
 Only pre-req for running unit tests is `npm install`.
 
 Run them with: `npm run test-unit`.
 
 #### Integration tests
+Before running any integration or E2E tests, run the following command to populate the `.env` file with resource IDs, table names, etc that these tests will need to run.
+
+```sh
+npm run env
+```
+
 Integration tests require that the `infra` stack has been deployed before running them.
 
 Run them with: `npm run test-integration`.

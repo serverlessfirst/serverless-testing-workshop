@@ -1,0 +1,4 @@
+export enum InvocationMode {
+  LOCAL_HANDLER = 'LOCAL_HANDLER',
+  REMOTE_TRIGGER = 'REMOTE_TRIGGER',
+}

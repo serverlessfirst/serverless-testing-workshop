@@ -15,6 +15,7 @@ const userManager = new TestUserManager({
   cognitoUserPoolId: cognitoConfig.userPoolId,
   cognitoUserPoolClientId: cognitoConfig.userPoolClientId,
   region: AWS_REGION,
+  usernamePrefix: 'getMyClubs',
 });
 
 describe('`GET /me/clubs`', () => {
