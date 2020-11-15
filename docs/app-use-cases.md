@@ -39,10 +39,10 @@ The following table describes the core use cases of the app, along with their as
 | Manager | Create new Club and set as public/private. <br /> (Private clubs are only visible to managers or players of that club) | `POST /clubs` | APIGW, Cognito, Lambda, DynamoDB |
 | Manager, Player | List all Clubs that I am a member of (either as a Manager or Player) | `GET /me/clubs` | APIGW, Cognito, Lambda, DynamoDB |
 | Manager | Upload ProfilePicture for the Club | `PUT /clubs/{id}/profile-pic` | APIGW, Cognito, Lambda, DynamoDB, S3 |
-| Manager | Invite Players to join the Club via email | `POST /clubs/{id}/players` | APIGW, Cognito, Lambda, DynamoDB, EventBridge, SES |
+| Manager | Invite Players to join the Club via email | `POST /clubs/{id}/players` | APIGW, Cognito, Lambda, DynamoDB, EventBridge, SQS, SES |
 | Player     	| Join a public Club without an invite | `POST /clubs/{id}/join` | APIGW, Cognito, Lambda, DynamoDB, EventBridge |
 | Player     	| Join a private Club with an invite | `POST /clubs/{id}/join` <br/>(`invitationToken` in body) | APIGW, Cognito, Lambda, DynamoDB, EventBridge |
-| Manager     	| Receive email notification whenever Players join a Club that I own         | n/a | EventBridge, Lambda, SES |
+| Manager     	| Receive email notification whenever Players join a Club that I own         | n/a | EventBridge, Lambda, SQS, SES |
 | Manager     	| Create a new ScheduledGame | `POST /clubs/{id}/games` | APIGW, Cognito, Lambda, DynamoDB, EventBridge |
-| Player     	| Receive email notifications whenever new ScheduledGame is created for a Club I play for | n/a | EventBridge, Lambda, SES |
+| Player     	| Receive email notifications whenever new ScheduledGame is created for a Club I play for | n/a | EventBridge, Lambda, SQS, SES |
 
