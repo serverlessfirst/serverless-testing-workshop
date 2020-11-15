@@ -6,6 +6,8 @@ provider:
     runtime: ${file(../../common/infra/provider-settings.yml):runtime}
     stage: ${file(../../common/infra/provider-settings.yml):stage}
     logRetentionInDays: ${file(../../common/infra/provider-settings.yml):logRetentionInDays}
+    logs:
+        httpApi: true
     httpApi:
         authorizers:
             cognitoJwtAuthorizer:
@@ -21,6 +23,9 @@ provider:
         COGNITO_USER_POOL_CLIENT_ID: ${cf:${self:custom.infraStack}.UserPoolClientId}
         DDB_TABLE_CLUBS: ${cf:${self:custom.infraStack}.DDBTableClubs}
         DDB_TABLE_MEMBERS: ${cf:${self:custom.infraStack}.DDBTableMembers}
+        EVENTBRIDGE_SERVICE_BUS_NAME: ${cf:${self:custom.infraStack}.ServiceBus}
+        OUTBOUND_EMAILS_QUEUE_URL: ${cf:${self:custom.infraStack}.OutboundEmailsQueueUrl}
+        DEFAULT_FROM_EMAIL: paul+testingworkshop@serverlessfirst.com
 
 custom:
     appName: ${file(../../common/infra/provider-settings.yml):appName}
@@ -75,7 +80,78 @@ functions:
             Resource:
                 - arn:aws:dynamodb:${self:provider.region}:${self:custom.awsAccountId}:table/${cf:${self:custom.infraStack}.DDBTableClubs}*
 
-# resources:
+    httpClubsMemberJoin:
+        handler: src/handlers/http/clubs/club-id/join/index.post
+        events:
+        -   httpApi:
+                path: /clubs/{clubId}/join
+                method: POST
+                authorizer: ${self:custom.defaultApiAuthorizer}
+        iamRoleStatements:
+        -   Effect: Allow
+            Action:
+                - dynamodb:GetItem
+                - dynamodb:Query
+                - dynamodb:PutItem
+            Resource:
+                - arn:aws:dynamodb:${self:provider.region}:${self:custom.awsAccountId}:table/${cf:${self:custom.infraStack}.DDBTableClubs}*
+                - arn:aws:dynamodb:${self:provider.region}:${self:custom.awsAccountId}:table/${cf:${self:custom.infraStack}.DDBTableMembers}*
+        -   Effect: Allow
+            Action:
+                - events:PutEvents
+            Resource:
+                - ${cf:${self:custom.infraStack}.ServiceBusArn}
+
+    # =================================================================
+    # EventBridge handlers
+    # =================================================================
+    ebNotifyMemberJoined:
+        handler: src/handlers/eventbridge/notify-member-joined.handler
+        events:
+        - eventBridge:
+            eventBus: ${cf:${self:custom.infraStack}.ServiceBusArn}
+            pattern:
+                source:
+                    - 'rest-api'
+                detail-type:
+                    - MEMBER_JOINED_CLUB
+        iamRoleStatements:
+        -   Effect: Allow
+            Action:
+                - dynamodb:GetItem
+                - dynamodb:Query
+            Resource:
+                - arn:aws:dynamodb:${self:provider.region}:${self:custom.awsAccountId}:table/${cf:${self:custom.infraStack}.DDBTableMembers}*
+        -   Effect: Allow
+            Action:
+                - sqs:SendMessage
+            Resource:
+                - ${cf:${self:custom.infraStack}.OutboundEmailsQueueArn}
+    ebWelcomeMember:
+        handler: src/handlers/eventbridge/welcome-member.handler
+        events:
+        - eventBridge:
+            eventBus: ${cf:${self:custom.infraStack}.ServiceBusArn}
+            pattern:
+                source:
+                    - 'rest-api'
+                detail-type:
+                    - MEMBER_JOINED_CLUB
+        iamRoleStatements:
+        -   Effect: Allow
+            Action:
+                - dynamodb:GetItem
+                - dynamodb:Query
+            Resource:
+                - arn:aws:dynamodb:${self:provider.region}:${self:custom.awsAccountId}:table/${cf:${self:custom.infraStack}.DDBTableMembers}*
+        -   Effect: Allow
+            Action:
+                - sqs:SendMessage
+            Resource:
+                - ${cf:${self:custom.infraStack}.OutboundEmailsQueueArn}
+
+resources:
+    ${file(./resources/e2e-test-resources.js)}
 
 plugins:
 - serverless-webpack

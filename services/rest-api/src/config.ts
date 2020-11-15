@@ -7,6 +7,8 @@ const getEnvString = (key: string, required: boolean = false) => {
   return val!;
 };
 
+export const APP_NAME = 'TestingWorkshop';
+
 export const STAGE = getEnvString('STAGE', true);
 
 export const AWS_REGION = getEnvString('REGION', true);
@@ -14,6 +16,11 @@ export const AWS_REGION = getEnvString('REGION', true);
 export const ddbConfig = {
   clubsTable: getEnvString('DDB_TABLE_CLUBS'),
   membersTable: getEnvString('DDB_TABLE_MEMBERS'),
+};
+
+export const eventBridgeConfig = {
+  serviceBusName: getEnvString('EVENTBRIDGE_SERVICE_BUS_NAME'),
+  defaultSource: 'rest-api',
 };
 
 export const cognitoConfig = {
@@ -24,4 +31,16 @@ export const cognitoConfig = {
 export const apiGatewayConfig = {
   domainName: getEnvString('API_GW_DOMAIN'),
   getBaseUrl: () => `https://${getEnvString('API_GW_DOMAIN')}.execute-api.${AWS_REGION}.amazonaws.com/`,
+};
+
+export const lambdaConfig = {
+  functionNamePrefix: `${APP_NAME}-restapi-${STAGE}-`,
+};
+
+export const sqsConfig = {
+  outboundEmailsQueueUrl: getEnvString('OUTBOUND_EMAILS_QUEUE_URL'),
+};
+
+export const emailConfig = {
+  defaultFromEmailAddress: getEnvString('DEFAULT_FROM_EMAIL'),
 };

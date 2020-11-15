@@ -7,6 +7,7 @@ import {
 import axios, { AxiosInstance, AxiosRequestConfig, Method } from 'axios';
 import { getClaimsFromUser } from '@svc/lib/auth/claims-parser';
 import { AuthenticatedUser } from '../test-user-manager';
+import { InvocationMode } from './types';
 
 /**
  * Partially typed version of APIGatewayProxyEvent.
@@ -34,11 +35,6 @@ export interface ApiGatewayInvocation {
   userContext?: AuthenticatedUser;
 }
 
-export enum InvocationMode {
-  LOCAL_HANDLER = 'LOCAL_HANDLER',
-  REMOTE_TRIGGER = 'REMOTE_TRIGGER',
-}
-
 export type ApiGatewayInvokerHandler =
   (event: APIGatewayProxyEventV2, context: Context) => Promise<APIGatewayProxyResult>;
 
@@ -48,6 +44,11 @@ export interface ApiGatewayHandlerInvokerOptions {
   handler?: ApiGatewayInvokerHandler;
 }
 
+/**
+ * Invokes API Gateway-fronted Lambda functions from tests in 1 of 2 modes:
+ *  - locally: by invoking the handler function passed into the constructor;
+ *  - remotely: by sending a HTTP request to a remote API Gateway endpoint
+ */
 export class ApiGatewayHandlerInvoker {
   readonly invocationMode: InvocationMode;
 

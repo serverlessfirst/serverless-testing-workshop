@@ -44,6 +44,7 @@ resources:
     - ${file(resources/dynamodb-tables.yml)}
     - ${file(resources/eventbridge-resources.yml)}
     - ${file(resources/cognito-resources.yml)}
+    - ${file(resources/sqs-resources.yml)}
     - Outputs:
         AWSAccountId:
             Value: !Ref 'AWS::AccountId'

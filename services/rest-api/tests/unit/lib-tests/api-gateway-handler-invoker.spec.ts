@@ -1,8 +1,9 @@
 import axios, { AxiosStatic } from 'axios';
 import {
-  ApiGatewayHandlerInvoker, ApiGatewayInvocation, InvocationMode,
+  ApiGatewayHandlerInvoker, ApiGatewayInvocation,
 } from '@tests/utils/handler-invokers/api-gateway-handler-invoker';
 import { APIGatewayProxyEventV2 } from 'aws-lambda';
+import { InvocationMode } from '@tests/utils/handler-invokers/types';
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<AxiosStatic>;
