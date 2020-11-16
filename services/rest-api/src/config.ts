@@ -44,3 +44,8 @@ export const sqsConfig = {
 export const emailConfig = {
   defaultFromEmailAddress: getEnvString('DEFAULT_FROM_EMAIL'),
 };
+
+export const s3Config = {
+  mediaBucket: getEnvString('S3_MEDIA_BUCKET'),
+  profilePhotosBucketPrefix: getEnvString('S3_MEDIA_BUCKET_CLUB_PROFILES_PREFIX'),
+};
