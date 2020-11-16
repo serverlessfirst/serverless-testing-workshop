@@ -55,10 +55,6 @@ export interface ScheduledGame {
   opponent: string;
 }
 
-export interface ProfilePhoto {
-  clubId: string;
-}
-
 // ==== EventBridge event message schemas
 
 export enum EventDetailType {
