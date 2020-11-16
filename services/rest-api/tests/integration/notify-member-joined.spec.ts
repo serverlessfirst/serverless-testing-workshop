@@ -6,9 +6,9 @@ import {
   ClubVisibility, EventDetailType, MemberJoinedClubEvent, MemberRole, User,
 } from '@svc/lib/types/sports-club-manager';
 import { LambdaFunctionHandlerInvoker } from '@tests/utils/handler-invokers/lambda-function-handler-invoker';
-import { v4 as uuidv4 } from 'uuid';
 import { SendEmailRequest } from '@svc/lib/email/types';
 import { deleteClub, putClubWithManager } from '@svc/lib/repos/clubs-repo';
+import uuid from '@svc/lib/uuid';
 
 const lambdaFunctionName = `${lambdaConfig.functionNamePrefix}ebNotifyMemberJoined`;
 const lambdaInvoker = new LambdaFunctionHandlerInvoker({
@@ -17,7 +17,7 @@ const lambdaInvoker = new LambdaFunctionHandlerInvoker({
   handler,
 });
 
-describe('notifyMemberJoined', () => {
+describe('`ebNotifyMemberJoined` Lambda function', () => {
   jest.setTimeout(30000);
   const testManager: User = {
     id: '123456789',
@@ -45,7 +45,7 @@ describe('notifyMemberJoined', () => {
     const evt: MemberJoinedClubEvent = {
       member: {
         user: {
-          id: `notifyMemberJoinedTest1_${uuidv4()}`, // ensure this data is uniquely identifiable to each test run
+          id: `notifyMemberJoinedTest1_${uuid()}`, // ensure this data is uniquely identifiable to each test run
           email: 'clubMember1@example.com',
           username: 'clubMember1@example.com',
         },
@@ -69,7 +69,7 @@ describe('notifyMemberJoined', () => {
   });
 
   it('sends correct email message to the OutboundEmails SQS queue when manager exists', async () => {
-    const userId = `notifyMemberJoinedTest2_${uuidv4()}`;
+    const userId = `notifyMemberJoinedTest2_${uuid()}`;
     const evt: MemberJoinedClubEvent = {
       member: {
         user: {
@@ -82,7 +82,7 @@ describe('notifyMemberJoined', () => {
       },
     };
     await lambdaInvoker.invoke({
-      id: uuidv4(),
+      id: uuid(),
       account: '',
       region: '',
       time: '',

@@ -9,6 +9,7 @@ export interface Club {
   name: string;
   sport: string;
   visibility: ClubVisibility;
+  profilePhotoUrlPath?: string;
 
   /** ID of the user who created the club */
   managerId: string;
@@ -52,6 +53,10 @@ export interface ScheduledGame {
   details?: string;
   clubId: string;
   opponent: string;
+}
+
+export interface ProfilePhoto {
+  clubId: string;
 }
 
 // ==== EventBridge event message schemas

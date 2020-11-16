@@ -149,3 +149,16 @@ export const getClubMember = async (clubId: string, userId: string) => {
   }).promise();
   return response.Item ? _omit(response.Item, ['clubId', 'userId']) as ClubMember : undefined;
 };
+
+export const setClubProfilePhotoPath = async (clubId: string, path: string) => {
+  const response = await ddb.update({
+    TableName: ddbConfig.clubsTable,
+    Key: { id: clubId },
+    UpdateExpression: 'SET profilePhotoUrlPath = :profilePhotoUrlPath',
+    ExpressionAttributeValues: {
+      ':profilePhotoUrlPath': path,
+    },
+    ConditionExpression: 'attribute_exists(id)',
+  }).promise();
+  return response;
+};

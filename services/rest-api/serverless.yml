@@ -26,6 +26,8 @@ provider:
         EVENTBRIDGE_SERVICE_BUS_NAME: ${cf:${self:custom.infraStack}.ServiceBus}
         OUTBOUND_EMAILS_QUEUE_URL: ${cf:${self:custom.infraStack}.OutboundEmailsQueueUrl}
         DEFAULT_FROM_EMAIL: paul+testingworkshop@serverlessfirst.com
+        S3_MEDIA_BUCKET: ${cf:${self:custom.infraStack}.MediaBucket}
+        S3_MEDIA_BUCKET_CLUB_PROFILES_PREFIX: "club-profiles/"
 
 custom:
     appName: ${file(../../common/infra/provider-settings.yml):appName}
@@ -149,6 +151,27 @@ functions:
                 - sqs:SendMessage
             Resource:
                 - ${cf:${self:custom.infraStack}.OutboundEmailsQueueArn}
+
+    # =================================================================
+    # S3 event handlers
+    # =================================================================
+    s3ProcessProfilePhoto:
+        handler: src/handlers/s3/process-profile-photo.handler
+        events:
+        - s3:
+            bucket: ${cf:${self:custom.infraStack}.MediaBucket}
+            event: s3:ObjectCreated:*
+            rules:
+                - prefix: ${self:provider.environment.S3_MEDIA_BUCKET_CLUB_PROFILES_PREFIX}
+            existing: true
+        iamRoleStatements:
+        -   Effect: Allow
+            Action:
+                - dynamodb:GetItem
+                - dynamodb:Query
+                - dynamodb:Update*
+            Resource:
+                - arn:aws:dynamodb:${self:provider.region}:${self:custom.awsAccountId}:table/${cf:${self:custom.infraStack}.DDBTableClubs}*
 
 resources:
     ${file(./resources/e2e-test-resources.js)}
