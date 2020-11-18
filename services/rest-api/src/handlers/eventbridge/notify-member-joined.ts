@@ -35,6 +35,6 @@ MemberJoinedClubEvent, any> = async (event) => {
     },
   };
   await queueEmail(email);
-
+  log.info(`[${event.id}] Email message queued for manager`);
   return manager;
 };
