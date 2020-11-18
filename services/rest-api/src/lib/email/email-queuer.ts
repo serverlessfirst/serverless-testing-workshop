@@ -17,4 +17,5 @@ export const queueEmail = async (email: SendEmailRequest) => {
     MessageBody: JSON.stringify(email),
   }).promise();
   log.info('Queued email.', { email, queueResult });
+  return queueResult;
 };

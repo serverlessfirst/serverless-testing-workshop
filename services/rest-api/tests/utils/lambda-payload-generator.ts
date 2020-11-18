@@ -1,6 +1,9 @@
 import uuid from '@svc/lib/uuid';
-import { S3Event } from 'aws-lambda';
+import {
+  EventBridgeEvent, S3Event, SQSEvent, SQSRecord,
+} from 'aws-lambda';
 
+const DEFAULT_AWS_REGION = process.env.AWS_REGION || 'eu-west-1';
 /**
  * Creates a fully-populated S3Event payload initiated with provided values.
  */
@@ -41,3 +44,43 @@ export const getS3Event = (
   };
   return evt;
 };
+
+export const getSQSEvent = (messageBodies: any[], awsRegion = DEFAULT_AWS_REGION) => {
+  const evt: SQSEvent = {
+    Records: messageBodies.map((bodyObject): SQSRecord => {
+      return {
+        messageId: uuid(),
+        messageAttributes: {},
+        receiptHandle: uuid(),
+        body: JSON.stringify(bodyObject),
+        md5OfBody: 'n/a',
+        eventSource: 'aws:sqs',
+        awsRegion,
+        eventSourceARN: 'n/a',
+        attributes: {
+          ApproximateReceiveCount: '1',
+          ApproximateFirstReceiveTimestamp: new Date().getTime().toString(),
+          SentTimestamp: new Date().getTime().toString(),
+          SenderId: 'n/a',
+        },
+      };
+    }),
+  };
+  return evt;
+};
+
+export function getEventBridgeEvent<TDetailType extends string, TDetail>(
+  detailType: TDetailType, detail: TDetail, source = '', awsRegion = DEFAULT_AWS_REGION,
+): EventBridgeEvent<TDetailType, TDetail> {
+  return {
+    id: uuid(),
+    account: 'n/a',
+    region: awsRegion,
+    time: new Date().toISOString(),
+    resources: [],
+    version: '',
+    source,
+    detail,
+    'detail-type': detailType,
+  };
+}

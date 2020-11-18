@@ -1,4 +1,4 @@
-import { AWS_REGION, lambdaConfig, sqsConfig } from '@svc/config';
+import { AWS_REGION, lambdaConfig } from '@svc/config';
 import { publishEvent } from '@svc/lib/events/events-publisher';
 import { handler } from '@svc/handlers/eventbridge/notify-member-joined';
 import {
@@ -6,9 +6,9 @@ import {
   ClubVisibility, EventDetailType, MemberJoinedClubEvent, MemberRole, User,
 } from '@svc/lib/types/sports-club-manager';
 import { LambdaFunctionHandlerInvoker } from '@tests/utils/handler-invokers/lambda-function-handler-invoker';
-import { SendEmailRequest } from '@svc/lib/email/types';
 import { deleteClub, putClubWithManager } from '@svc/lib/repos/clubs-repo';
 import uuid from '@svc/lib/uuid';
+import { getEventBridgeEvent } from '@tests/utils/lambda-payload-generator';
 
 const lambdaFunctionName = `${lambdaConfig.functionNamePrefix}ebNotifyMemberJoined`;
 const lambdaInvoker = new LambdaFunctionHandlerInvoker({
@@ -63,12 +63,12 @@ describe('`ebNotifyMemberJoined` Lambda function', () => {
     const expectedLog = evt.member.user.id;
     await expect({
       region: AWS_REGION,
-      function: `${lambdaConfig.functionNamePrefix}ebNotifyMemberJoined`,
+      function: lambdaFunctionName,
       timeout: 20000, // needs a high timeout to account for 1) potential cold start and 2) latency in shipping logs from Lambda to CloudWatch
     }).toHaveLog(expectedLog);
   });
 
-  it('sends correct email message to the OutboundEmails SQS queue when manager exists', async () => {
+  it('sends correct message to the OutboundEmails SQS queue when manager exists [e2e] [slow]', async () => {
     const userId = `notifyMemberJoinedTest2_${uuid()}`;
     const evt: MemberJoinedClubEvent = {
       member: {
@@ -81,24 +81,16 @@ describe('`ebNotifyMemberJoined` Lambda function', () => {
         club: testClub,
       },
     };
-    await lambdaInvoker.invoke({
-      id: uuid(),
-      account: '',
-      region: '',
-      time: '',
-      resources: [],
-      version: '',
-      source: '',
-      detail: evt,
-      'detail-type': EventDetailType.MEMBER_JOINED_CLUB,
-    });
+    const ebEvent = getEventBridgeEvent(EventDetailType.MEMBER_JOINED_CLUB, evt);
+    await lambdaInvoker.invoke(ebEvent);
 
+    // We could inspect the SQS queue here, but that's unreliable as another Lambda may get that message first.
+    // So instead, we'll check the CloudWatch logs again.
+    const expectedLog = `[${ebEvent.id}] Email message queued for manager`;
     await expect({
       region: AWS_REGION,
-      queueUrl: sqsConfig.outboundEmailsQueueUrl,
-      timeout: 10000,
-    }).toHaveMessage(
-      (received: SendEmailRequest) => received.destination?.ToAddresses![0] === testManager.email,
-    );
+      function: lambdaFunctionName,
+      timeout: 20000,
+    }).toHaveLog(expectedLog);
   });
 });
