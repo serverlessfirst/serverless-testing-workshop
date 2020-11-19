@@ -27,4 +27,5 @@ EventBridgeHandler<EventDetailType.MEMBER_JOINED_CLUB, MemberJoinedClubEvent, an
     },
   };
   await queueEmail(email);
+  log.info(`[${event.id}] Email message queued for member`);
 };
