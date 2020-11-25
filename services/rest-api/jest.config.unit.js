@@ -28,4 +28,7 @@ module.exports = {
     '<rootDir>/.webpack',
     '<rootDir>/.serverless',
   ],
+  setupFilesAfterEnv: [
+    './tests/utils/setup/init-unit-tests.ts',
+  ],
 };

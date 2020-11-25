@@ -2,8 +2,7 @@ import { AWS_REGION, lambdaConfig } from '@svc/config';
 import { publishEvent } from '@svc/lib/events/events-publisher';
 import { handler } from '@svc/handlers/eventbridge/notify-member-joined';
 import {
-  Club,
-  ClubVisibility, EventDetailType, MemberJoinedClubEvent, MemberRole, User,
+  Club, ClubVisibility, EventDetailType, MemberJoinedClubEvent, MemberRole, User,
 } from '@svc/lib/types/sports-club-manager';
 import { LambdaFunctionHandlerInvoker } from '@tests/utils/handler-invokers/lambda-function-handler-invoker';
 import { deleteClub, putClubWithManager } from '@svc/lib/repos/clubs-repo';
@@ -18,7 +17,7 @@ const lambdaInvoker = new LambdaFunctionHandlerInvoker({
 });
 
 describe('`ebNotifyMemberJoined` Lambda function', () => {
-  jest.setTimeout(30000);
+  jest.setTimeout(60000);
   const testManager: User = {
     id: '123456789',
     username: 'notifyMemberJoinedTestManager',
@@ -64,7 +63,7 @@ describe('`ebNotifyMemberJoined` Lambda function', () => {
     await expect({
       region: AWS_REGION,
       function: lambdaFunctionName,
-      timeout: 20000, // needs a high timeout to account for 1) potential cold start and 2) latency in shipping logs from Lambda to CloudWatch
+      timeout: 25000, // needs a high timeout to account for 1) potential cold start and 2) latency in shipping logs from Lambda to CloudWatch
     }).toHaveLog(expectedLog);
   });
 
@@ -90,7 +89,7 @@ describe('`ebNotifyMemberJoined` Lambda function', () => {
     await expect({
       region: AWS_REGION,
       function: lambdaFunctionName,
-      timeout: 20000,
+      timeout: 25000,
     }).toHaveLog(expectedLog);
   });
 });

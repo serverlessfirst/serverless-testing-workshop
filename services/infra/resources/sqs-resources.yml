@@ -3,16 +3,24 @@ Resources:
     OutboundEmailsQueue:
         Type: AWS::SQS::Queue
         Properties:
+            VisibilityTimeout: 20 # seconds that Lambda has to process message before its returned to queue
             RedrivePolicy:
                 deadLetterTargetArn: !GetAtt OutboundEmailsDLQ.Arn
-                maxReceiveCount: 10
+                maxReceiveCount: 3 # Amount of attempts before moving to DLQ
 
     # Dead Letter Queues
     OutboundEmailsDLQ:
         Type: AWS::SQS::Queue
+        Properties:
+            VisibilityTimeout: 5 # keep this low for faster e2e testing in non-prod (should match OutboundEmailsQueue value for prod account though!)
+            MessageRetentionPeriod: 300 # 5 mins - !!this should be set to much higher in prod
 
 Outputs:
     OutboundEmailsQueueUrl:
         Value: !Ref OutboundEmailsQueue
     OutboundEmailsQueueArn:
         Value: !GetAtt OutboundEmailsQueue.Arn
+    OutboundEmailsDLQUrl:
+        Value: !Ref OutboundEmailsDLQ
+    OutboundEmailsDLQArn:
+        Value: !GetAtt OutboundEmailsDLQ.Arn
