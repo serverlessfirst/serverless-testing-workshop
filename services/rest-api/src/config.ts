@@ -39,6 +39,7 @@ export const lambdaConfig = {
 
 export const sqsConfig = {
   outboundEmailsQueueUrl: getEnvString('OUTBOUND_EMAILS_QUEUE_URL'),
+  outboundEmailsDlqUrl: getEnvString('OUTBOUND_EMAILS_DLQ_URL'),
 };
 
 export const emailConfig = {

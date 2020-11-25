@@ -25,7 +25,8 @@ provider:
         DDB_TABLE_MEMBERS: ${cf:${self:custom.infraStack}.DDBTableMembers}
         EVENTBRIDGE_SERVICE_BUS_NAME: ${cf:${self:custom.infraStack}.ServiceBus}
         OUTBOUND_EMAILS_QUEUE_URL: ${cf:${self:custom.infraStack}.OutboundEmailsQueueUrl}
-        DEFAULT_FROM_EMAIL: paul+testingworkshop@serverlessfirst.com
+        OUTBOUND_EMAILS_DLQ_URL: ${cf:${self:custom.infraStack}.OutboundEmailsDLQUrl}
+        DEFAULT_FROM_EMAIL: paul@serverlessfirst.com
         S3_MEDIA_BUCKET: ${cf:${self:custom.infraStack}.MediaBucket}
         S3_MEDIA_BUCKET_CLUB_PROFILES_PREFIX: "club-profiles/"
 
@@ -172,6 +173,23 @@ functions:
                 - dynamodb:Update*
             Resource:
                 - arn:aws:dynamodb:${self:provider.region}:${self:custom.awsAccountId}:table/${cf:${self:custom.infraStack}.DDBTableClubs}*
+
+    # =================================================================
+    # SQS event handlers
+    # =================================================================
+    sqsDeliverEmail:
+        handler: src/handlers/sqs/deliver-email.handler
+        timeout: 6 # ~ 1/3 of queue's VisibilityTimeout
+        events:
+            - sqs:
+                arn: ${cf:${self:custom.infraStack}.OutboundEmailsQueueArn}
+                batchSize: 10 # max number of messages passed to single Lambda invocation
+        iamRoleStatements:
+        -   Effect: Allow
+            Action:
+                - ses:SendEmail
+            Resource:
+                - arn:aws:ses:${self:provider.region}:${self:custom.awsAccountId}:identity/${self:provider.environment.DEFAULT_FROM_EMAIL}
 
 resources:
     ${file(./resources/e2e-test-resources.js)}
