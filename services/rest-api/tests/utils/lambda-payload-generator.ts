@@ -1,7 +1,11 @@
 import uuid from '@svc/lib/uuid';
 import {
+  DynamoDBRecord,
+  DynamoDBStreamEvent,
   EventBridgeEvent, S3Event, SQSEvent, SQSRecord,
 } from 'aws-lambda';
+
+import { Marshaller } from '@aws/dynamodb-auto-marshaller';
 
 const DEFAULT_AWS_REGION = process.env.AWS_REGION || 'eu-west-1';
 /**
@@ -84,3 +88,43 @@ export function getEventBridgeEvent<TDetailType extends string, TDetail>(
     'detail-type': detailType,
   };
 }
+
+export type DynamoDBStreamEventName = 'INSERT' | 'MODIFY' | 'REMOVE';
+
+export interface DDBStreamEventItem {
+  eventName: DynamoDBStreamEventName;
+  keys: { [key: string]: any };
+  newItem?: any;
+  oldItem?: any;
+}
+
+export const getDynamoDBStreamEvent = (
+  items: DDBStreamEventItem[], streamViewType = 'NEW_AND_OLD_IMAGES', awsRegion = DEFAULT_AWS_REGION,
+) => {
+  const marshaller = new Marshaller();
+  const evt: DynamoDBStreamEvent = {
+    Records: items.map((item, index): DynamoDBRecord => {
+      return {
+        eventID: uuid(),
+        eventVersion: '1.0',
+        eventName: item.eventName,
+        dynamodb: {
+          Keys: marshaller.marshallItem(item.keys) as any,
+          ...(item.newItem && {
+            NewImage: marshaller.marshallItem(item.newItem) as any,
+          }),
+          ...(item.oldItem && {
+            OldImage: marshaller.marshallItem(item.oldItem) as any,
+          }),
+          SequenceNumber: (index + 1).toString(),
+          StreamViewType: streamViewType as any,
+          SizeBytes: 1,
+        },
+        eventSource: 'aws:dynamodb',
+        awsRegion,
+        eventSourceARN: 'n/a',
+      };
+    }),
+  };
+  return evt;
+};

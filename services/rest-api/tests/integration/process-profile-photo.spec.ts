@@ -62,8 +62,6 @@ const cleanupS3 = async () => {
 };
 
 describe('`s3ProcessProfilePhoto` Lambda function', () => {
-  jest.setTimeout(30000);
-
   beforeAll(async () => {
     // Clear existing objects just in case the afterAll from previous test run didn't execute ok.
     await cleanupS3();

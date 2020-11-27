@@ -51,9 +51,22 @@ Resources:
                 KeyType: HASH
             -   AttributeName: userId
                 KeyType: RANGE
+            StreamSpecification:
+                StreamViewType: NEW_IMAGE
+
+    # Dead letter queue for failed DDB stream events
+    DDBMembersStreamDLQ:
+        Type: AWS::SQS::Queue
+
 
 Outputs:
     DDBTableClubs:
         Value: !Ref ClubsTable
     DDBTableMembers:
         Value: !Ref MembersTable
+    DDBTableMembersStreamArn:
+        Value: !GetAtt MembersTable.StreamArn
+    DDBMembersStreamDLQ:
+        Value: !Ref DDBMembersStreamDLQ
+    DDBMembersStreamDLQArn:
+        Value: !GetAtt DDBMembersStreamDLQ.Arn

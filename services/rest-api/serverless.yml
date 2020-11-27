@@ -99,11 +99,6 @@ functions:
             Resource:
                 - arn:aws:dynamodb:${self:provider.region}:${self:custom.awsAccountId}:table/${cf:${self:custom.infraStack}.DDBTableClubs}*
                 - arn:aws:dynamodb:${self:provider.region}:${self:custom.awsAccountId}:table/${cf:${self:custom.infraStack}.DDBTableMembers}*
-        -   Effect: Allow
-            Action:
-                - events:PutEvents
-            Resource:
-                - ${cf:${self:custom.infraStack}.ServiceBusArn}
 
     # =================================================================
     # EventBridge handlers
@@ -190,6 +185,33 @@ functions:
                 - ses:SendEmail
             Resource:
                 - arn:aws:ses:${self:provider.region}:${self:custom.awsAccountId}:identity/${self:provider.environment.DEFAULT_FROM_EMAIL}
+
+    # =================================================================
+    # DynamoDB stream handlers
+    # =================================================================
+    ddbProcessNewMember:
+        handler: src/handlers/ddb/process-new-member.handler
+        events:
+            - stream:
+                type: dynamodb
+                arn: ${cf:${self:custom.infraStack}.DDBTableMembersStreamArn}
+                bisectBatchOnFunctionError: true # split batch in 2 if function returns error
+                maximumRetryAttempts: 3
+                batchSize: 10 # Upper limit of EventBridge.PutEvents.Entries
+                destinations:
+                    # Capture failed messages to DLQ
+                    onFailure: ${cf:${self:custom.infraStack}.DDBMembersStreamDLQArn}
+        iamRoleStatements:
+        -   Effect: Allow
+            Action:
+                - events:PutEvents
+            Resource:
+                - ${cf:${self:custom.infraStack}.ServiceBusArn}
+        -   Effect: Allow
+            Action:
+                - sqs:SendMessage
+            Resource:
+                - ${cf:${self:custom.infraStack}.DDBMembersStreamDLQArn}
 
 resources:
     ${file(./resources/e2e-test-resources.js)}
