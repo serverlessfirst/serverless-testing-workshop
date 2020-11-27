@@ -29,8 +29,6 @@ const getTestEmailRequest = (toAddress: string, subject: string) => {
 };
 
 describe('`sqsDeliverEmail` Lambda function', () => {
-  jest.setTimeout(120000);
-
   const GOOD_EMAIL_ADDRESS = 'success@simulator.amazonses.com'; // https://docs.aws.amazon.com/ses/latest/DeveloperGuide/send-email-simulator.html
   const BAD_EMAIL_ADDRESS = 'malformed email address';
 

@@ -1,8 +1,7 @@
 import log from '@dazn/lambda-powertools-logger';
 import { getUserFromClaims } from '@svc/lib/auth/claims-parser';
-import { publishEvent } from '@svc/lib/events/events-publisher';
 import { getClub, putClubMember } from '@svc/lib/repos/clubs-repo';
-import { EventDetailType, MemberJoinedClubEvent, MemberRole } from '@svc/lib/types/sports-club-manager';
+import { ClubMember, MemberRole } from '@svc/lib/types/sports-club-manager';
 import { APIGatewayProxyEventV2 } from 'aws-lambda';
 
 /**
@@ -24,14 +23,10 @@ export const post = async (event: APIGatewayProxyEventV2) => {
   // Put the ClubMember to DDB
   await putClubMember(club, user);
 
-  // Now publish event to Eventbridge
-  const evt: MemberJoinedClubEvent = {
-    member: { user, role: MemberRole.PLAYER, club },
-  };
-  await publishEvent(evt, EventDetailType.MEMBER_JOINED_CLUB);
+  const member: ClubMember = { user, role: MemberRole.PLAYER, club };
 
   return {
     statusCode: 201,
-    body: JSON.stringify(evt),
+    body: JSON.stringify(member),
   };
 };

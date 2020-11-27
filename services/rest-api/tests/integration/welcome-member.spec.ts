@@ -17,8 +17,6 @@ const lambdaInvoker = new LambdaFunctionHandlerInvoker({
 });
 
 describe('`welcome-member` Lambda function', () => {
-  jest.setTimeout(30000);
-
   const testManager: User = {
     id: '123456789',
     username: 'notifyMemberJoinedTestManager',
