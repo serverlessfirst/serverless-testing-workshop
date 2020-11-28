@@ -16,7 +16,7 @@ This stream has been set up and the Lambda function has been implemented, but cu
 Your task is to write these E2E tests. The `process-new-member.e2e.spec.ts` file has already been created to hold your test cases.
 
 Hints:
-- You might be able to cover all these failures modes with 2 or even a single test case
+- You might be able to cover all these failures modes with 2, or even a single test case
 - Use techniques covered in Module 5 to verify correct publishing of events to EventBridge.
 
 ## Submitting your work
