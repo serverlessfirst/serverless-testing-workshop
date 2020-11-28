@@ -6,6 +6,7 @@ The exercises in the workshop relate to a Sports Management App ([read use cases
 - [Week 1 Worksheet](./exercises/week1-worksheet.md)
 - [Week 2 Worksheet](./exercises/week2-worksheet.md)
 - [Week 3 Worksheet](./exercises/week3-worksheet.md)
+- [Week 4 Worksheet](./exercises/week4-worksheet.md)
 
 ## Working with this repo during the workshop
 As part of the workshop, you will be completing exercises each week that involve making code and documentation changes to this repository and submitting changes via PR to your instructor for review. You should use your own private copy (not a fork!) of this repo.
