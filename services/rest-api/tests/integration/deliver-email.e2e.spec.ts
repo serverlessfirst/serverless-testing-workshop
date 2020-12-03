@@ -29,6 +29,8 @@ const getTestEmailRequest = (toAddress: string, subject: string) => {
 };
 
 describe('`sqsDeliverEmail` Lambda function', () => {
+  jest.setTimeout(120000);
+
   const GOOD_EMAIL_ADDRESS = 'success@simulator.amazonses.com'; // https://docs.aws.amazon.com/ses/latest/DeveloperGuide/send-email-simulator.html
   const BAD_EMAIL_ADDRESS = 'malformed email address';
 
@@ -86,8 +88,8 @@ describe('`sqsDeliverEmail` Lambda function', () => {
       await expect({
         region: AWS_REGION,
         queueUrl: DLQ_URL,
-        timeout: 60000,
-        pollEvery: 2000,
+        timeout: 50000,
+        pollEvery: 1000,
       }).toHaveMessage((dlqMsg: SendEmailRequest) => dlqMsg.message.Subject.Data === subject);
     });
   });

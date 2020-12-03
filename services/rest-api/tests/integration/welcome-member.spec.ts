@@ -80,7 +80,7 @@ describe('`welcome-member` Lambda function', () => {
     await expect({
       region: AWS_REGION,
       function: lambdaFunctionName,
-      timeout: 20000,
+      timeout: 30000,
     }).toHaveLog(expectedLog);
   });
 });
