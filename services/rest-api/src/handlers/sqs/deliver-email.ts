@@ -1,8 +1,8 @@
 import { SQSEvent } from 'aws-lambda';
 import log from '@dazn/lambda-powertools-logger';
 import { SendEmailRequest } from '@svc/lib/email/types';
-import SES from 'aws-sdk/clients/ses';
-import SQS from 'aws-sdk/clients/sqs';
+import { SES } from '@aws-sdk/client-ses';
+import { SQS } from '@aws-sdk/client-sqs';
 import { AWS_REGION, sqsConfig } from '@svc/config';
 
 const sesClient = new SES({ region: AWS_REGION });

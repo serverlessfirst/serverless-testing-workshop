@@ -1,5 +1,5 @@
 import { AWS_REGION, sqsConfig } from '@svc/config';
-import SQS from 'aws-sdk/clients/sqs';
+import SQS from '@aws-sdk/client-sqs';
 import log from '@dazn/lambda-powertools-logger';
 import { SendEmailRequest } from './types';
 

@@ -1,10 +1,10 @@
-import 'aws-sdk/clients/lambda';
+import '@aws-sdk/client-lambda';
 import { LambdaFunctionHandlerInvoker, LambdaFunctionHandlerInvokerConfig } from '@tests/utils/handler-invokers/lambda-function-handler-invoker';
 import { InvocationMode } from '@tests/utils/handler-invokers/types';
 
 const mockedLambdaInvoke = jest.fn();
 
-jest.mock('aws-sdk/clients/lambda', () => jest.fn(() => {
+jest.mock('@aws-sdk/client-lambda', () => jest.fn(() => {
   return { invoke: mockedLambdaInvoke };
 }));
 

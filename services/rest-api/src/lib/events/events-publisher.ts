@@ -1,4 +1,4 @@
-import EventBridge, { PutEventsResponse } from 'aws-sdk/clients/eventbridge';
+import { EventBridge, PutEventsResponse } from '@aws-sdk/client-eventbridge';
 import log from '@dazn/lambda-powertools-logger';
 import { eventBridgeConfig, AWS_REGION } from '@svc/config';
 import { EventDetailType, PublishableEventDetail } from '@svc/lib/types/sports-club-manager';

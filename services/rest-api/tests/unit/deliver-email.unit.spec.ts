@@ -3,7 +3,7 @@ import { deleteMessage as mockedSQSDelete } from '@tests/utils/aws-mocks/sqs-moc
 import { sendEmail as mockedSESSendEmail } from '@tests/utils/aws-mocks/ses-mocked';
 import { SendEmailRequest } from '@svc/lib/email/types';
 import { getSQSEvent } from '@tests/utils/lambda-payload-generator';
-import SES from 'aws-sdk/clients/ses';
+import { SES } from '@aws-sdk/client-ses';
 import { randomEmail } from '@tests/utils/test-data-generator';
 import _ from 'lodash';
 // Must import handler after sqs-mocked lib

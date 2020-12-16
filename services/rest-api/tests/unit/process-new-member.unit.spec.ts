@@ -5,7 +5,7 @@ import { DDBStreamEventItem, DynamoDBStreamEventName, getDynamoDBStreamEvent } f
 import {
   Club, ClubVisibility, MemberJoinedClubEvent, MemberRole, User,
 } from '@svc/lib/types/sports-club-manager';
-import EventBridge from 'aws-sdk/clients/eventbridge';
+import { EventBridge } from '@aws-sdk/client-eventbridge';
 import { generateTestUser } from '@tests/utils/test-data-generator';
 import { ClubMemberDDBItem } from '@svc/lib/repos/clubs-repo';
 import _ from 'lodash';

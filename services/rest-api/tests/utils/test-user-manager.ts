@@ -1,5 +1,5 @@
 import { User } from '@svc/lib/types/sports-club-manager';
-import CognitoIdentityServiceProvider from 'aws-sdk/clients/cognitoidentityserviceprovider';
+import { CognitoIdentityProvider } from '@aws-sdk/client-cognito-identity-provider';
 import _ from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { generateTestUser, randomPassword } from './test-data-generator';
@@ -29,10 +29,10 @@ interface CreatedUserContext {
 export class TestUserManager {
   private readonly createdUsers: CreatedUserContext[] = [];
 
-  private readonly cognitoIsp: CognitoIdentityServiceProvider;
+  private readonly cognitoIsp: CognitoIdentityProvider;
 
   constructor(private readonly config: TestUserManagerConfig) {
-    this.cognitoIsp = new CognitoIdentityServiceProvider({ region: config.region });
+    this.cognitoIsp = new CognitoIdentityProvider({ region: config.region });
   }
 
   async createUser(password: string) {

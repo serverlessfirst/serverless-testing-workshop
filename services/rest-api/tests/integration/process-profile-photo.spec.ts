@@ -1,6 +1,6 @@
 import { AWS_REGION, lambdaConfig, s3Config } from '@svc/config';
 import { handler } from '@svc/handlers/s3/process-profile-photo';
-import S3 from 'aws-sdk/clients/s3';
+import S3 from '@aws-sdk/client-s3';
 import { readFileSync } from 'fs';
 import path from 'path';
 import { clearAllObjects } from 'aws-testing-library/lib/utils/s3';

@@ -1,5 +1,5 @@
 import uuid from '@svc/lib/uuid';
-import 'aws-sdk/clients/ses';
+import '@aws-sdk/client-ses';
 
 export const sendEmail = jest.fn();
 export const sendEmailImplementation = () => {
@@ -11,6 +11,6 @@ export const sendEmailImplementation = () => {
 sendEmail.mockImplementation(sendEmailImplementation);
 
 // Intercepts the SES() constructor with this function.
-jest.mock('aws-sdk/clients/ses', () => jest.fn(() => {
+jest.mock('@aws-sdk/client-ses', () => jest.fn(() => {
   return { sendEmail };
 }));

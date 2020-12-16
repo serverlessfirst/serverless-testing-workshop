@@ -3,7 +3,7 @@ import { AWS_REGION, ddbConfig } from '@svc/config';
 import {
   Club, ClubVisibility, User, PagedList, PagedQueryOptions, ClubMember, MemberRole,
 } from '@svc/lib/types/sports-club-manager';
-import { DocumentClient } from 'aws-sdk/clients/dynamodb';
+import { DocumentClient } from '@aws-sdk/client-dynamodb';
 import { executeTransactWrite } from '@svc/lib/ddb-utils';
 import _omit from 'lodash/omit';
 

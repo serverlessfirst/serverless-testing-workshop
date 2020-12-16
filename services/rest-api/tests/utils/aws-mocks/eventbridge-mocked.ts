@@ -1,4 +1,4 @@
-import 'aws-sdk/clients/eventbridge';
+import '@aws-sdk/client-eventbridge';
 
 export const putEvents = jest.fn();
 export const putEventsImplementation = () => {
@@ -10,6 +10,6 @@ export const putEventsImplementation = () => {
 putEvents.mockImplementation(putEventsImplementation);
 
 // Intercepts the EventBridge() constructor with this function.
-jest.mock('aws-sdk/clients/eventbridge', () => jest.fn(() => {
+jest.mock('@aws-sdk/client-eventbridge', () => jest.fn(() => {
   return { putEvents };
 }));

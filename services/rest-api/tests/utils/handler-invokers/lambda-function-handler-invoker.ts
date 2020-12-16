@@ -1,5 +1,5 @@
 import { Context, Handler } from 'aws-lambda';
-import Lambda from 'aws-sdk/clients/lambda';
+import { Lambda } from '@aws-sdk/client-lambda';
 import { InvocationMode } from './types';
 
 export interface LambdaFunctionHandlerInvokerConfig<TEvent = any, TResult = any> {
