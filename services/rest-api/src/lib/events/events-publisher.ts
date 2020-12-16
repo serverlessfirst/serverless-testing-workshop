@@ -26,7 +26,7 @@ export const publishEvents = async (
   };
   let result: PutEventsResponse;
   try {
-    result = await ebClient.putEvents(publishRequest).promise();
+    result = await ebClient.putEvents(publishRequest);
   } catch (error) {
     log.error('Error publishing events to EventBridge', { publishRequest }, error);
     throw error;

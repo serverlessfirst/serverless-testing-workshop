@@ -5,7 +5,7 @@ import { DDBStreamEventItem, DynamoDBStreamEventName, getDynamoDBStreamEvent } f
 import {
   Club, ClubVisibility, MemberJoinedClubEvent, MemberRole, User,
 } from '@svc/lib/types/sports-club-manager';
-import { EventBridge } from '@aws-sdk/client-eventbridge';
+import type { PutEventsRequest } from '@aws-sdk/client-eventbridge';
 import { generateTestUser } from '@tests/utils/test-data-generator';
 import { ClubMemberDDBItem } from '@svc/lib/repos/clubs-repo';
 import _ from 'lodash';
@@ -59,7 +59,7 @@ describe('`ddbProcessNewMember` handler', () => {
     await handler(event);
 
     expect(putEvents).toHaveBeenCalledTimes(1);
-    const requestArg = putEvents.mock.calls[0][0] as EventBridge.PutEventsRequest;
+    const requestArg = putEvents.mock.calls[0][0] as PutEventsRequest;
     expect(requestArg.Entries).toHaveLength(2);
   });
 
@@ -112,9 +112,9 @@ describe('`ddbProcessNewMember` handler', () => {
 
     // Verify that only the 1 entry for the INSERT test user was sent to EB
     expect(putEvents).toHaveBeenCalledTimes(1);
-    const requestArg = putEvents.mock.calls[0][0] as EventBridge.PutEventsRequest;
+    const requestArg = putEvents.mock.calls[0][0] as PutEventsRequest;
     expect(requestArg.Entries).toHaveLength(1);
-    const sentEvent = JSON.parse(requestArg.Entries[0].Detail!) as MemberJoinedClubEvent;
+    const sentEvent = JSON.parse(requestArg.Entries![0].Detail!) as MemberJoinedClubEvent;
     expect(sentEvent.member.user.id).toEqual(insertedUserId);
   });
 

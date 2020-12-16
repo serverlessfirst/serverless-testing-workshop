@@ -70,6 +70,7 @@
     "@aws-sdk/client-dynamodb": "^3.0.0",
     "@aws-sdk/client-ses": "^3.0.0",
     "@aws-sdk/client-sqs": "^3.0.0",
+    "@aws-sdk/util-dynamodb": "^3.0.0",
     "@aws/dynamodb-auto-marshaller": "^0.7.1",
     "@dazn/lambda-powertools-logger": "^1.24.1",
     "@types/serverless": "^1.78.9",

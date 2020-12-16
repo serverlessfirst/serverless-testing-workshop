@@ -1,5 +1,5 @@
 import { AWS_REGION, sqsConfig } from '@svc/config';
-import SQS from '@aws-sdk/client-sqs';
+import { SQS } from '@aws-sdk/client-sqs';
 import log from '@dazn/lambda-powertools-logger';
 import { SendEmailRequest } from './types';
 
@@ -15,7 +15,7 @@ export const queueEmail = async (email: SendEmailRequest) => {
   const queueResult = await sqs.sendMessage({
     QueueUrl: EMAIL_QUEUE_URL,
     MessageBody: JSON.stringify(email),
-  }).promise();
+  });
   log.info('Queued email.', { email, queueResult });
   return queueResult;
 };

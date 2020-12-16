@@ -14,7 +14,7 @@ const processMessage = async (msg: SendEmailRequest, sqsMessageId: string) => {
     Source: msg.fromAddress,
     Destination: msg.destination,
     Message: msg.message,
-  }).promise();
+  });
   log.info('SES message sent', { sqsMessageId, sesResult, msg });
   return sesResult.MessageId;
 };
@@ -24,7 +24,7 @@ const deleteQueueMessage = async (receiptHandle: string) => {
     await sqsClient.deleteMessage({
       QueueUrl: sqsConfig.outboundEmailsQueueUrl,
       ReceiptHandle: receiptHandle,
-    }).promise();
+    });
   } catch (error) {
     // Suppress errors with deletion (e.g. if Lambda was invoked directly during a test without a real SQS receiptHandle)
     log.error('Error deleting message from queue', { receiptHandle }, error);
