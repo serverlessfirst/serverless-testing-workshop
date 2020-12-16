@@ -21,15 +21,15 @@ Resources:
             ExplicitAuthFlows:
                 - USER_PASSWORD_AUTH
 
-    CognitoIdentityPool:
-        Type: AWS::Cognito::IdentityPool
-        Properties:
-            IdentityPoolName: ${self:custom.appName}_${self:provider.stage}
-            AllowUnauthenticatedIdentities: false
-            CognitoIdentityProviders:
-            -   ClientId: !Ref CognitoUserPoolWebClient
-                ProviderName:
-                    Fn::GetAtt: [ "CognitoUserPool", "ProviderName" ]
+    # CognitoIdentityPool:
+    #     Type: AWS::Cognito::IdentityPool
+    #     Properties:
+    #         IdentityPoolName: ${self:custom.appName}_${self:provider.stage}
+    #         AllowUnauthenticatedIdentities: false
+    #         CognitoIdentityProviders:
+    #         -   ClientId: !Ref CognitoUserPoolWebClient
+    #             ProviderName:
+    #                 Fn::GetAtt: [ "CognitoUserPool", "ProviderName" ]
 
 Outputs:
     UserPoolId:
@@ -41,6 +41,6 @@ Outputs:
     UserPoolClientId:
         Description: ID of the User Pool Client
         Value: !Ref CognitoUserPoolWebClient
-    IdentityPoolId:
-        Description: ID of the IdentityPool
-        Value: !Ref CognitoIdentityPool
+    # IdentityPoolId:
+    #     Description: ID of the IdentityPool
+    #     Value: !Ref CognitoIdentityPool
