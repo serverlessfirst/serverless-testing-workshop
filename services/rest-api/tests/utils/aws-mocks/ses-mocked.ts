@@ -2,11 +2,7 @@ import uuid from '@svc/lib/uuid';
 import '@aws-sdk/client-ses';
 
 export const sendEmail = jest.fn();
-export const sendEmailImplementation = () => {
-  return {
-    promise: () => Promise.resolve({ MessageId: uuid() }),
-  };
-};
+export const sendEmailImplementation = () => Promise.resolve({ MessageId: uuid() });
 
 sendEmail.mockImplementation(sendEmailImplementation);
 

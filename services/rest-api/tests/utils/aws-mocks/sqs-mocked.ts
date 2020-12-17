@@ -1,11 +1,7 @@
 import '@aws-sdk/client-sqs';
 
 export const deleteMessage = jest.fn();
-export const deleteMessageImplementation = () => {
-  return {
-    promise: () => Promise.resolve({}),
-  };
-};
+export const deleteMessageImplementation = () => Promise.resolve({});
 
 deleteMessage.mockImplementation(deleteMessageImplementation);
 

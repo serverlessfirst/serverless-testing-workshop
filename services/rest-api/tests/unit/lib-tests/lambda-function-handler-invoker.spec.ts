@@ -60,11 +60,7 @@ describe('LambdaFunctionHandlerInvoker', () => {
         const invoker = new LambdaFunctionHandlerInvoker<any, any>({
           invocationMode, handler, lambdaFunctionName, awsRegion,
         });
-        mockedLambdaInvoke.mockImplementation(() => {
-          return {
-            promise: () => Promise.resolve({}),
-          };
-        });
+        mockedLambdaInvoke.mockImplementation(() => Promise.resolve({}));
         const evt = {
           foo: 'ls rush in',
           bar: 'bq',

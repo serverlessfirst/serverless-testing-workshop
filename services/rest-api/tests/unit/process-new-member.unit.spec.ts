@@ -50,11 +50,9 @@ describe('`ddbProcessNewMember` handler', () => {
       getTestClubMemberRecord(`${uuid()}_ddbProcessNewMember_User1`, 'INSERT'),
       getTestClubMemberRecord(`${uuid()}_ddbProcessNewMember_User2`, 'INSERT'),
     ]);
-    const putEvents = mockedEventBridgePutEvents.mockImplementationOnce(() => {
-      return {
-        promise: () => Promise.resolve({ FailedEntryCount: 0, Entries: [] }),
-      };
-    });
+    const putEvents = mockedEventBridgePutEvents.mockImplementationOnce(
+      () => Promise.resolve({ FailedEntryCount: 0, Entries: [] }),
+    );
 
     await handler(event);
 
@@ -68,11 +66,9 @@ describe('`ddbProcessNewMember` handler', () => {
       getTestClubMemberRecord(`${uuid()}_ddbProcessNewMember_User1`, 'INSERT'),
       getTestClubMemberRecord(`${uuid()}_ddbProcessNewMember_User2`, 'INSERT'),
     ]);
-    const putEvents = mockedEventBridgePutEvents.mockImplementationOnce(() => {
-      return {
-        promise: () => Promise.reject(new Error('Some network or IAM error')),
-      };
-    });
+    const putEvents = mockedEventBridgePutEvents.mockImplementationOnce(
+      () => Promise.reject(new Error('Some network or IAM error')),
+    );
 
     await expect(handler(event)).rejects.toThrowError();
 
@@ -84,11 +80,9 @@ describe('`ddbProcessNewMember` handler', () => {
       getTestClubMemberRecord(`${uuid()}_ddbProcessNewMember_User1`, 'INSERT'),
       getTestClubMemberRecord(`${uuid()}_ddbProcessNewMember_User2`, 'INSERT'),
     ]);
-    const putEvents = mockedEventBridgePutEvents.mockImplementationOnce(() => {
-      return {
-        promise: () => Promise.resolve({ FailedEntryCount: 1, Entries: [] }),
-      };
-    });
+    const putEvents = mockedEventBridgePutEvents.mockImplementationOnce(
+      () => Promise.resolve({ FailedEntryCount: 1, Entries: [] }),
+    );
 
     await expect(handler(event)).rejects.toThrowError();
 
@@ -102,11 +96,9 @@ describe('`ddbProcessNewMember` handler', () => {
       getTestClubMemberRecord(`${uuid()}_ddbProcessNewMember_IgnoreMe`, operationToIgnore as DynamoDBStreamEventName), // add in event to be ignored
       getTestClubMemberRecord(insertedUserId, 'INSERT'),
     ]);
-    const putEvents = mockedEventBridgePutEvents.mockImplementationOnce(() => {
-      return {
-        promise: () => Promise.resolve({ FailedEntryCount: 0, Entries: [] }),
-      };
-    });
+    const putEvents = mockedEventBridgePutEvents.mockImplementationOnce(
+      () => Promise.resolve({ FailedEntryCount: 0, Entries: [] }),
+    );
 
     await handler(event);
 
@@ -123,11 +115,9 @@ describe('`ddbProcessNewMember` handler', () => {
       getTestClubMemberRecord(`${uuid()}_ddbProcessNewMember_IgnoreMe1`, 'MODIFY'),
       getTestClubMemberRecord(`${uuid()}_ddbProcessNewMember_IgnoreMe2`, 'REMOVE'),
     ]);
-    const putEvents = mockedEventBridgePutEvents.mockImplementationOnce(() => {
-      return {
-        promise: () => Promise.resolve({ FailedEntryCount: 0, Entries: [] }),
-      };
-    });
+    const putEvents = mockedEventBridgePutEvents.mockImplementationOnce(
+      () => Promise.resolve({ FailedEntryCount: 0, Entries: [] }),
+    );
 
     await handler(event);
 

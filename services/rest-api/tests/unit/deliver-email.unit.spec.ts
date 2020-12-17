@@ -28,14 +28,10 @@ describe('`sqsDeliverEmail` handler', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedSESSendEmail.mockImplementation((req: SESSendEmailRequest) => {
-      return {
-        promise: () => {
-          if (req.Destination?.ToAddresses![0].startsWith(BAD_EMAIL_ADDRESS)) {
-            return Promise.reject();
-          }
-          return Promise.resolve({ MessageId: uuid() });
-        },
-      };
+      if (req.Destination?.ToAddresses![0].startsWith(BAD_EMAIL_ADDRESS)) {
+        return Promise.reject();
+      }
+      return Promise.resolve({ MessageId: uuid() });
     });
   });
 

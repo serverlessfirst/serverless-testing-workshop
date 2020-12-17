@@ -1,11 +1,7 @@
 import '@aws-sdk/client-eventbridge';
 
 export const putEvents = jest.fn();
-export const putEventsImplementation = () => {
-  return {
-    promise: () => Promise.resolve({ FailedEntryCount: 0, Entries: [] }),
-  };
-};
+export const putEventsImplementation = () => Promise.resolve({ FailedEntryCount: 0, Entries: [] });
 
 putEvents.mockImplementation(putEventsImplementation);
 
