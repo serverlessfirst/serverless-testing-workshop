@@ -4,9 +4,13 @@ import { InvocationMode } from '@tests/utils/handler-invokers/types';
 
 const mockedLambdaInvoke = jest.fn();
 
-jest.mock('@aws-sdk/client-lambda', () => jest.fn(() => {
-  return { invoke: mockedLambdaInvoke };
-}));
+jest.mock('@aws-sdk/client-lambda', () => {
+  return {
+    Lambda: jest.fn().mockImplementation(() => {
+      return { invoke: mockedLambdaInvoke };
+    }),
+  };
+});
 
 describe('LambdaFunctionHandlerInvoker', () => {
   const awsRegion = 'eu-west-1';
@@ -72,7 +76,7 @@ describe('LambdaFunctionHandlerInvoker', () => {
         const expectedRequest = {
           FunctionName: lambdaFunctionName,
           InvocationType: 'RequestResponse',
-          Payload: JSON.stringify(evt),
+          Payload: new TextEncoder().encode(JSON.stringify(evt)),
         };
         const sentRequest = mockedLambdaInvoke.mock.calls[0][0];
         expect(sentRequest).toEqual(expectedRequest);
