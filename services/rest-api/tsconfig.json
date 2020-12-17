@@ -1,7 +1,6 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "experimentalDecorators": true,
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
@@ -20,9 +19,5 @@
     "src/**/*.ts",
     "tests/**/*.ts",
     "../../common/src/**/*.ts"
-  ],
-  "exclude": [
-    "./dist",
-    "tests/lesson-examples/**"
   ]
 }

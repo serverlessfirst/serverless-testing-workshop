@@ -16,6 +16,7 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "noUnusedLocals": false,
+    "skipLibCheck": true,
     "types": [
       "jest",
       "node"
