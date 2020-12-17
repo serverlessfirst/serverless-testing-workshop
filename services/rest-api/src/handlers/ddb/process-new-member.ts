@@ -2,9 +2,7 @@ import { DynamoDBStreamEvent } from 'aws-lambda';
 import log from '@dazn/lambda-powertools-logger';
 import { publishEvents } from '@svc/lib/events/events-publisher';
 import { ClubMember, EventDetailType, MemberJoinedClubEvent } from '@svc/lib/types/sports-club-manager';
-import { Marshaller } from '@aws/dynamodb-auto-marshaller';
-
-const marshaller = new Marshaller();
+import { unmarshall } from '@aws-sdk/util-dynamodb';
 
 export const handler = async (event: DynamoDBStreamEvent) => {
   log.debug('Received event', { event });
@@ -13,7 +11,7 @@ export const handler = async (event: DynamoDBStreamEvent) => {
   const newMemberEvents: MemberJoinedClubEvent[] = event.Records
     .filter(r => r.eventName === 'INSERT' && r.dynamodb?.NewImage)
     .map((r) => {
-      const member: ClubMember = marshaller.unmarshallItem(r.dynamodb!.NewImage!) as any;
+      const member: ClubMember = unmarshall(r.dynamodb!.NewImage! as any) as any;
       return { member };
     });
 

@@ -4,8 +4,7 @@ import {
   DynamoDBStreamEvent,
   EventBridgeEvent, S3Event, SQSEvent, SQSRecord,
 } from 'aws-lambda';
-
-import { Marshaller } from '@aws/dynamodb-auto-marshaller';
+import { marshall } from '@aws-sdk/util-dynamodb';
 
 const DEFAULT_AWS_REGION = process.env.AWS_REGION || 'eu-west-1';
 /**
@@ -101,7 +100,6 @@ export interface DDBStreamEventItem {
 export const getDynamoDBStreamEvent = (
   items: DDBStreamEventItem[], streamViewType = 'NEW_AND_OLD_IMAGES', awsRegion = DEFAULT_AWS_REGION,
 ) => {
-  const marshaller = new Marshaller();
   const evt: DynamoDBStreamEvent = {
     Records: items.map((item, index): DynamoDBRecord => {
       return {
@@ -109,12 +107,12 @@ export const getDynamoDBStreamEvent = (
         eventVersion: '1.0',
         eventName: item.eventName,
         dynamodb: {
-          Keys: marshaller.marshallItem(item.keys) as any,
+          Keys: marshall(item.keys) as any,
           ...(item.newItem && {
-            NewImage: marshaller.marshallItem(item.newItem) as any,
+            NewImage: marshall(item.newItem) as any,
           }),
           ...(item.oldItem && {
-            OldImage: marshaller.marshallItem(item.oldItem) as any,
+            OldImage: marshall(item.oldItem) as any,
           }),
           SequenceNumber: (index + 1).toString(),
           StreamViewType: streamViewType as any,
