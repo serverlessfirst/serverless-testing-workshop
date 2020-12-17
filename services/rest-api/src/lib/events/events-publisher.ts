@@ -1,4 +1,4 @@
-import { EventBridge, PutEventsResponse } from '@aws-sdk/client-eventbridge';
+import { EventBridge, PutEventsRequest, PutEventsResponse } from '@aws-sdk/client-eventbridge';
 import log from '@dazn/lambda-powertools-logger';
 import { eventBridgeConfig, AWS_REGION } from '@svc/config';
 import { EventDetailType, PublishableEventDetail } from '@svc/lib/types/sports-club-manager';
@@ -14,7 +14,7 @@ const { serviceBusName, defaultSource } = eventBridgeConfig;
 export const publishEvents = async (
   events: PublishableEventDetail[], detailType: EventDetailType, source = defaultSource,
 ) => {
-  const publishRequest: EventBridge.Types.PutEventsRequest = {
+  const publishRequest: PutEventsRequest = {
     Entries: events.map((e) => {
       return {
         EventBusName: serviceBusName,

@@ -3,12 +3,14 @@ import { AWS_REGION, ddbConfig } from '@svc/config';
 import {
   Club, ClubVisibility, User, PagedList, PagedQueryOptions, ClubMember, MemberRole,
 } from '@svc/lib/types/sports-club-manager';
-import { DynamoDB } from '@aws-sdk/client-dynamodb';
+import { DynamoDB, QueryCommandOutput } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
-import { executeTransactWrite } from '@svc/lib/ddb-utils';
 import _omit from 'lodash/omit';
 
 const ddb = new DynamoDB({ region: AWS_REGION });
+
+const unmarshallQueryItems = <T extends unknown>(items: QueryCommandOutput['Items']) =>
+  (items || []).map(i => unmarshall(i) as T);
 
 export const putClub = async (club: Club) => {
   await ddb.putItem({
@@ -129,7 +131,7 @@ export const listClubsByVisibility = async (
   });
   return {
     lastEvaluatedKey: response.LastEvaluatedKey ? unmarshall(response.LastEvaluatedKey).id as string : undefined,
-    items: (response.Items || []).map(i => unmarshall(i) as any as Club),
+    items: unmarshallQueryItems<Club>(response.Items),
   };
 };
 
@@ -138,29 +140,29 @@ export const listClubsForManager = async (managerId: string): Promise<Club[]> =>
     TableName: ddbConfig.clubsTable,
     IndexName: 'ClubsByManager',
     KeyConditionExpression: 'managerId = :managerId',
-    ExpressionAttributeValues: {
+    ExpressionAttributeValues: marshall({
       ':managerId': managerId,
-    },
+    }),
   });
-  return response.Items as Club[];
+  return unmarshallQueryItems<Club>(response.Items);
 };
 
 export const getClubMember = async (clubId: string, userId: string) => {
-  const response = await ddb.get({
+  const response = await ddb.getItem({
     TableName: ddbConfig.membersTable,
-    Key: { clubId, userId },
+    Key: marshall({ clubId, userId }),
   });
-  return response.Item ? _omit(response.Item, ['clubId', 'userId']) as ClubMember : undefined;
+  return response.Item ? _omit(unmarshall(response.Item), ['clubId', 'userId']) as any as ClubMember : undefined;
 };
 
 export const setClubProfilePhotoPath = async (clubId: string, path: string) => {
-  const response = await ddb.update({
+  const response = await ddb.updateItem({
     TableName: ddbConfig.clubsTable,
-    Key: { id: clubId },
+    Key: marshall({ id: clubId }),
     UpdateExpression: 'SET profilePhotoUrlPath = :profilePhotoUrlPath',
-    ExpressionAttributeValues: {
+    ExpressionAttributeValues: marshall({
       ':profilePhotoUrlPath': path,
-    },
+    }),
     ConditionExpression: 'attribute_exists(id)',
   });
   return response;
