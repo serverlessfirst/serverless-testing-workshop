@@ -6,6 +6,10 @@ export const putEventsImplementation = () => Promise.resolve({ FailedEntryCount:
 putEvents.mockImplementation(putEventsImplementation);
 
 // Intercepts the EventBridge() constructor with this function.
-jest.mock('@aws-sdk/client-eventbridge', () => jest.fn(() => {
-  return { putEvents };
-}));
+jest.mock('@aws-sdk/client-eventbridge', () => {
+  return {
+    EventBridge: jest.fn().mockImplementation(() => {
+      return { putEvents };
+    }),
+  };
+});
