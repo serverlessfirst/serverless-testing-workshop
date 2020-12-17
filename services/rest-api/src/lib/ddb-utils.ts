@@ -10,6 +10,7 @@ export async function executeTransactWrite(
 ): Promise<TransactWriteItemsOutput> {
   const transactionRequest = await docClient.transactWriteItems(params);
   return transactionRequest;
+  // TODO need to check if above issue is still present in v3 SDK. If not, this func is no longer needed
   // let cancellationReasons: any[];
   // transactionRequest.on('extractError', (response) => {
   //   try {
