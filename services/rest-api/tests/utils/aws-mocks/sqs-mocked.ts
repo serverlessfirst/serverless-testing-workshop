@@ -1,15 +1,15 @@
-import 'aws-sdk/clients/sqs';
+import '@aws-sdk/client-sqs';
 
 export const deleteMessage = jest.fn();
-export const deleteMessageImplementation = () => {
-  return {
-    promise: () => Promise.resolve({}),
-  };
-};
+export const deleteMessageImplementation = () => Promise.resolve({});
 
 deleteMessage.mockImplementation(deleteMessageImplementation);
 
 // Intercepts the SQS() constructor with this function.
-jest.mock('aws-sdk/clients/sqs', () => jest.fn(() => {
-  return { deleteMessage };
-}));
+jest.mock('@aws-sdk/client-sqs', () => {
+  return {
+    SQS: jest.fn().mockImplementation(() => {
+      return { deleteMessage };
+    }),
+  };
+});

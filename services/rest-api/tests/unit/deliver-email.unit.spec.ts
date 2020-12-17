@@ -3,7 +3,7 @@ import { deleteMessage as mockedSQSDelete } from '@tests/utils/aws-mocks/sqs-moc
 import { sendEmail as mockedSESSendEmail } from '@tests/utils/aws-mocks/ses-mocked';
 import { SendEmailRequest } from '@svc/lib/email/types';
 import { getSQSEvent } from '@tests/utils/lambda-payload-generator';
-import SES from 'aws-sdk/clients/ses';
+import type { SendEmailRequest as SESSendEmailRequest } from '@aws-sdk/client-ses';
 import { randomEmail } from '@tests/utils/test-data-generator';
 import _ from 'lodash';
 // Must import handler after sqs-mocked lib
@@ -27,15 +27,11 @@ describe('`sqsDeliverEmail` handler', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockedSESSendEmail.mockImplementation((req: SES.SendEmailRequest) => {
-      return {
-        promise: () => {
-          if (req.Destination.ToAddresses![0].startsWith(BAD_EMAIL_ADDRESS)) {
-            return Promise.reject();
-          }
-          return Promise.resolve({ MessageId: uuid() });
-        },
-      };
+    mockedSESSendEmail.mockImplementation((req: SESSendEmailRequest) => {
+      if (req.Destination?.ToAddresses![0].startsWith(BAD_EMAIL_ADDRESS)) {
+        return Promise.reject();
+      }
+      return Promise.resolve({ MessageId: uuid() });
     });
   });
 

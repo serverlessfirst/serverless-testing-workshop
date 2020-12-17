@@ -1,5 +1,5 @@
 import { Context, Handler } from 'aws-lambda';
-import Lambda from 'aws-sdk/clients/lambda';
+import { Lambda } from '@aws-sdk/client-lambda';
 import { InvocationMode } from './types';
 
 export interface LambdaFunctionHandlerInvokerConfig<TEvent = any, TResult = any> {
@@ -50,12 +50,12 @@ export class LambdaFunctionHandlerInvoker<TEvent = any, TResult = any> {
     const result = await this.lambdaClient!.invoke({
       FunctionName: this.config.lambdaFunctionName,
       InvocationType: 'RequestResponse',
-      Payload: JSON.stringify(event),
-    }).promise();
+      Payload: new TextEncoder().encode(JSON.stringify(event)),
+    });
     if (result.FunctionError) {
       throw new Error(`FunctionError returned from ${this.config.lambdaFunctionName}. Error details: ${result.Payload}`);
     }
-    return JSON.parse(result.Payload as string || '{}') as TResult;
+    return JSON.parse(new TextDecoder('utf-8').decode(result.Payload) || '{}') as TResult;
   }
 
   async invokeLocal(event: TEvent) {

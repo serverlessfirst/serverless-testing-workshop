@@ -6,7 +6,7 @@
       "esnext",
       "dom"
     ],
-    "target": "es2017",
+    "target": "es2018",
     "module": "commonjs",
     "moduleResolution": "node",
     "strict": true,
@@ -16,6 +16,7 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "noUnusedLocals": false,
+    "skipLibCheck": true,
     "types": [
       "jest",
       "node"

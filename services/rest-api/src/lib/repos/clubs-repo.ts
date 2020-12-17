@@ -3,27 +3,30 @@ import { AWS_REGION, ddbConfig } from '@svc/config';
 import {
   Club, ClubVisibility, User, PagedList, PagedQueryOptions, ClubMember, MemberRole,
 } from '@svc/lib/types/sports-club-manager';
-import { DocumentClient } from 'aws-sdk/clients/dynamodb';
-import { executeTransactWrite } from '@svc/lib/ddb-utils';
+import { DynamoDB, QueryCommandOutput } from '@aws-sdk/client-dynamodb';
+import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import _omit from 'lodash/omit';
 
-const ddb = new DocumentClient({ region: AWS_REGION });
+const ddb = new DynamoDB({ region: AWS_REGION });
+
+const unmarshallQueryItems = <T extends unknown>(items: QueryCommandOutput['Items']) =>
+  (items || []).map(i => unmarshall(i) as T);
 
 export const putClub = async (club: Club) => {
-  await ddb.put({
+  await ddb.putItem({
     TableName: ddbConfig.clubsTable,
-    Item: club,
-  }).promise();
+    Item: marshall(club as any),
+  });
 };
 
-export const getClub = async (id: string) => {
-  const response = await ddb.get({
+export const getClub = async (clubId: string) => {
+  const response = await ddb.getItem({
     TableName: ddbConfig.clubsTable,
-    Key: {
-      id,
-    },
-  }).promise();
-  return response.Item as (Club | undefined);
+    Key: marshall({
+      id: clubId,
+    }),
+  });
+  return response.Item ? unmarshall(response.Item) as any as Club : undefined;
 };
 
 export interface ClubMemberDDBItem extends ClubMember {
@@ -40,10 +43,10 @@ export const putClubMember = async (club: Club, member: User) => {
     userId: member.id,
     clubId: club.id,
   };
-  await ddb.put({
+  await ddb.putItem({
     TableName: ddbConfig.membersTable,
-    Item: clubMemberItem,
-  }).promise();
+    Item: marshall(clubMemberItem as any),
+  });
 };
 
 export const putClubWithManager = async (club: Club, manager: User) => {
@@ -54,24 +57,25 @@ export const putClubWithManager = async (club: Club, manager: User) => {
     userId: manager.id,
     clubId: club.id,
   };
-  return executeTransactWrite({
+
+  return ddb.transactWriteItems({
     TransactItems: [
       // Club entity
       {
         Put: {
           TableName: ddbConfig.clubsTable,
-          Item: club,
+          Item: marshall(club as any),
         },
       },
       // ClubMember entity
       {
         Put: {
           TableName: ddbConfig.membersTable,
-          Item: clubMemberItem,
+          Item: marshall(clubMemberItem as any),
         },
       },
     ],
-  }, ddb);
+  });
 };
 
 /**
@@ -82,27 +86,28 @@ export const deleteClub = async (id: string) => {
   const response = await ddb.query({
     TableName: ddbConfig.membersTable,
     KeyConditionExpression: 'clubId = :clubId',
-    ExpressionAttributeValues: {
+    ExpressionAttributeValues: marshall({
       ':clubId': id,
-    },
-  }).promise();
-  await executeTransactWrite({
+    }),
+  });
+  await ddb.transactWriteItems({
     TransactItems: [{
       Delete: {
         TableName: ddbConfig.clubsTable,
-        Key: { id },
+        Key: marshall({ id }),
       },
     },
-    ...(response.Items || [] as ClubMemberDDBItem[]).map((member) => {
+    ...(response.Items || []).map((item) => {
+      const member = unmarshall(item) as any as ClubMemberDDBItem;
       return {
         Delete: {
           TableName: ddbConfig.membersTable,
-          Key: { clubId: member.clubId, userId: member.userId },
+          Key: marshall({ clubId: member.clubId, userId: member.userId }),
         },
       };
     }),
     ],
-  }, ddb);
+  });
   log.info('Deleted club', { id });
 };
 
@@ -113,20 +118,20 @@ export const listClubsByVisibility = async (
     TableName: ddbConfig.clubsTable,
     IndexName: 'ClubsByVisibility',
     KeyConditionExpression: 'visibility = :visibility',
-    ExpressionAttributeValues: {
+    ExpressionAttributeValues: marshall({
       ':visibility': visibility,
-    },
+    } as any),
     Limit: queryOptions.limit,
     ...(queryOptions.lastEvaluatedKey && {
-      ExclusiveStartKey: {
+      ExclusiveStartKey: marshall({
         id: queryOptions.lastEvaluatedKey,
         visibility,
-      },
+      }),
     }),
-  }).promise();
+  });
   return {
-    lastEvaluatedKey: response.LastEvaluatedKey?.id,
-    items: response.Items as Club[],
+    lastEvaluatedKey: response.LastEvaluatedKey ? unmarshall(response.LastEvaluatedKey).id as string : undefined,
+    items: unmarshallQueryItems<Club>(response.Items),
   };
 };
 
@@ -135,30 +140,30 @@ export const listClubsForManager = async (managerId: string): Promise<Club[]> =>
     TableName: ddbConfig.clubsTable,
     IndexName: 'ClubsByManager',
     KeyConditionExpression: 'managerId = :managerId',
-    ExpressionAttributeValues: {
+    ExpressionAttributeValues: marshall({
       ':managerId': managerId,
-    },
-  }).promise();
-  return response.Items as Club[];
+    }),
+  });
+  return unmarshallQueryItems<Club>(response.Items);
 };
 
 export const getClubMember = async (clubId: string, userId: string) => {
-  const response = await ddb.get({
+  const response = await ddb.getItem({
     TableName: ddbConfig.membersTable,
-    Key: { clubId, userId },
-  }).promise();
-  return response.Item ? _omit(response.Item, ['clubId', 'userId']) as ClubMember : undefined;
+    Key: marshall({ clubId, userId }),
+  });
+  return response.Item ? _omit(unmarshall(response.Item), ['clubId', 'userId']) as any as ClubMember : undefined;
 };
 
 export const setClubProfilePhotoPath = async (clubId: string, path: string) => {
-  const response = await ddb.update({
+  const response = await ddb.updateItem({
     TableName: ddbConfig.clubsTable,
-    Key: { id: clubId },
+    Key: marshall({ id: clubId }),
     UpdateExpression: 'SET profilePhotoUrlPath = :profilePhotoUrlPath',
-    ExpressionAttributeValues: {
+    ExpressionAttributeValues: marshall({
       ':profilePhotoUrlPath': path,
-    },
+    }),
     ConditionExpression: 'attribute_exists(id)',
-  }).promise();
+  });
   return response;
 };

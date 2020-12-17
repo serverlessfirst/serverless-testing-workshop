@@ -90,7 +90,7 @@ describe('`sqsDeliverEmail` Lambda function', () => {
         queueUrl: DLQ_URL,
         timeout: 50000,
         pollEvery: 1000,
-      }).toHaveMessage((dlqMsg: SendEmailRequest) => dlqMsg.message.Subject.Data === subject);
+      }).toHaveMessage((dlqMsg: SendEmailRequest) => dlqMsg.message.Subject?.Data === subject);
     });
   });
 });

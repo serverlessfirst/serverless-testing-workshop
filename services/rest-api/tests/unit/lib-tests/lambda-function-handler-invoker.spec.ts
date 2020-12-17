@@ -1,12 +1,16 @@
-import 'aws-sdk/clients/lambda';
+import '@aws-sdk/client-lambda';
 import { LambdaFunctionHandlerInvoker, LambdaFunctionHandlerInvokerConfig } from '@tests/utils/handler-invokers/lambda-function-handler-invoker';
 import { InvocationMode } from '@tests/utils/handler-invokers/types';
 
 const mockedLambdaInvoke = jest.fn();
 
-jest.mock('aws-sdk/clients/lambda', () => jest.fn(() => {
-  return { invoke: mockedLambdaInvoke };
-}));
+jest.mock('@aws-sdk/client-lambda', () => {
+  return {
+    Lambda: jest.fn().mockImplementation(() => {
+      return { invoke: mockedLambdaInvoke };
+    }),
+  };
+});
 
 describe('LambdaFunctionHandlerInvoker', () => {
   const awsRegion = 'eu-west-1';
@@ -60,11 +64,7 @@ describe('LambdaFunctionHandlerInvoker', () => {
         const invoker = new LambdaFunctionHandlerInvoker<any, any>({
           invocationMode, handler, lambdaFunctionName, awsRegion,
         });
-        mockedLambdaInvoke.mockImplementation(() => {
-          return {
-            promise: () => Promise.resolve({}),
-          };
-        });
+        mockedLambdaInvoke.mockImplementation(() => Promise.resolve({}));
         const evt = {
           foo: 'ls rush in',
           bar: 'bq',
@@ -76,7 +76,7 @@ describe('LambdaFunctionHandlerInvoker', () => {
         const expectedRequest = {
           FunctionName: lambdaFunctionName,
           InvocationType: 'RequestResponse',
-          Payload: JSON.stringify(evt),
+          Payload: new TextEncoder().encode(JSON.stringify(evt)),
         };
         const sentRequest = mockedLambdaInvoke.mock.calls[0][0];
         expect(sentRequest).toEqual(expectedRequest);

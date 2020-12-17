@@ -1,4 +1,4 @@
-import { Destination, Message } from 'aws-sdk/clients/ses';
+import { Destination, Message } from '@aws-sdk/client-ses';
 
 export interface SendEmailRequest {
   fromAddress: string;

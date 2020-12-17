@@ -1,5 +1,5 @@
 import { User } from '@svc/lib/types/sports-club-manager';
-import CognitoIdentityServiceProvider from 'aws-sdk/clients/cognitoidentityserviceprovider';
+import { CognitoIdentityProvider } from '@aws-sdk/client-cognito-identity-provider';
 import _ from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { generateTestUser, randomPassword } from './test-data-generator';
@@ -29,10 +29,10 @@ interface CreatedUserContext {
 export class TestUserManager {
   private readonly createdUsers: CreatedUserContext[] = [];
 
-  private readonly cognitoIsp: CognitoIdentityServiceProvider;
+  private readonly cognitoIsp: CognitoIdentityProvider;
 
   constructor(private readonly config: TestUserManagerConfig) {
-    this.cognitoIsp = new CognitoIdentityServiceProvider({ region: config.region });
+    this.cognitoIsp = new CognitoIdentityProvider({ region: config.region });
   }
 
   async createUser(password: string) {
@@ -47,7 +47,7 @@ export class TestUserManager {
         { Name: 'name', Value: userProfile.name },
         { Name: 'email', Value: userProfile.email },
       ],
-    }).promise();
+    });
     const user: User = {
       ...userProfile,
       id: result.User?.Attributes?.find(a => a.Name === 'sub')?.Value!,
@@ -87,7 +87,7 @@ export class TestUserManager {
           USERNAME: user.username,
           PASSWORD: password,
         },
-      }).promise();
+      });
 
       // Now need to ensure that new password is set in order that user status is set to CONFIRMED.
       // Since this is only a test user, we'll just keep the same password.
@@ -99,7 +99,7 @@ export class TestUserManager {
           USERNAME: user.username,
           NEW_PASSWORD: password,
         },
-      }).promise();
+      });
       if (!challengeResp.AuthenticationResult) {
         return Promise.reject(new Error('Authentication failed'));
       }
@@ -117,7 +117,7 @@ export class TestUserManager {
     if (userContext.inCognito) {
       await this.cognitoIsp.adminDeleteUser(
         { UserPoolId: this.config.cognitoUserPoolId, Username: userContext.user.username },
-      ).promise();
+      );
     }
   }
 
