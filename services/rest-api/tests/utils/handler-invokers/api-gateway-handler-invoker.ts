@@ -119,15 +119,14 @@ export class ApiGatewayHandlerInvoker {
         ...(invocation.userContext?.idToken && {
           Authorization: invocation.userContext.idToken,
         }),
+        'Content-Type': invocation.event.headers
+          ? invocation.event.headers['Content-Type'] : 'application/json',
       },
       body: (typeof invocation.event.body === 'object' ? JSON.stringify(invocation.event.body) : invocation.event.body) || null,
       pathParameters: invocation.event.pathParameters,
       queryStringParameters: invocation.event.queryStringParameters,
       ..._omit(invocation.event, 'body'),
     };
-    if (!event.headers['Content-Type']) {
-      event.headers['Content-Type'] = 'application/json';
-    }
     // Create a stubbed context
     const context: Context = {
       awsRequestId: requestId,

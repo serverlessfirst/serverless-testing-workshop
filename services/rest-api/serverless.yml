@@ -2,10 +2,10 @@ service: ${self:custom.appName}-restapi
 
 provider:
     name: aws
-    region: ${file(../../common/infra/provider-settings.yml):region}
-    runtime: ${file(../../common/infra/provider-settings.yml):runtime}
-    stage: ${file(../../common/infra/provider-settings.yml):stage}
-    logRetentionInDays: ${file(../../common/infra/provider-settings.yml):logRetentionInDays}
+    region: eu-west-1
+    runtime: nodejs12.x
+    stage: ${opt:stage,'dev'}
+    logRetentionInDays: 30
     logs:
         httpApi: true
     httpApi:
@@ -31,7 +31,7 @@ provider:
         S3_MEDIA_BUCKET_CLUB_PROFILES_PREFIX: "club-profiles/"
 
 custom:
-    appName: ${file(../../common/infra/provider-settings.yml):appName}
+    appName: TestingWorkshop
     infraStack: ${self:custom.appName}-infra-${self:provider.stage}
     awsAccountId: ${cf:${self:custom.infraStack}.AWSAccountId}
     webpack:
