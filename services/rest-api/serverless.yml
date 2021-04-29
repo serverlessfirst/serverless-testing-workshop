@@ -34,10 +34,12 @@ custom:
     appName: TestingWorkshop
     infraStack: ${self:custom.appName}-infra-${self:provider.stage}
     awsAccountId: ${cf:${self:custom.infraStack}.AWSAccountId}
-    webpack:
-        includeModules: false
     defaultApiAuthorizer:
         name: cognitoJwtAuthorizer
+    esbuild:
+        bundle: true
+        target: es2018
+        exclude: []
 
 package:
     individually: true
@@ -217,6 +219,6 @@ resources:
     ${file(./resources/e2e-test-resources.js)}
 
 plugins:
-- serverless-webpack
+- serverless-esbuild
 - serverless-export-env
 - serverless-iam-roles-per-function

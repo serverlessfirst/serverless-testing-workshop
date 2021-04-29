@@ -1,7 +1,7 @@
 node_modules
 dist
 .serverless
-.webpack
+.build
 **/*.json
 **/*.yml
 **/*.env

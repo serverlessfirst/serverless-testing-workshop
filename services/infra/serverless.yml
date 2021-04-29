@@ -29,15 +29,10 @@ custom:
     appName: TestingWorkshop
     dynamoDbTablePrefix: ${self:custom.appName}-${self:provider.stage}
     snsTopicPrefix: ${self:custom.appName}-${self:provider.stage}
-    webpack:
-        includeModules: false
     deletionPolicy:
         personal: Delete
         dev: Delete
         prod: Retain
-
-package:
-    individually: true
 
 resources:
     - ${file(resources/s3-cloudfront.yml)}
