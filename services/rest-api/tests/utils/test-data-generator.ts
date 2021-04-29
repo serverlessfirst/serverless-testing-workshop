@@ -3,7 +3,7 @@ import faker from 'faker';
 
 const TEST_EMAIL_ADDRESS_DOMAIN = process.env.TEST_EMAIL_ADDRESS_DOMAIN || 'example.com';
 
-export const randomEmail = (usernamePrefix?: string): string => `test_${usernamePrefix}_${faker.random.uuid()}@${TEST_EMAIL_ADDRESS_DOMAIN}`.toLowerCase();
+export const randomEmail = (usernamePrefix?: string): string => `test_${usernamePrefix}_${faker.datatype.uuid()}@${TEST_EMAIL_ADDRESS_DOMAIN}`.toLowerCase();
 
 export const randomPassword = (): string => `${faker.random.alphaNumeric(16)}s3rv3rl35515T!`;
 

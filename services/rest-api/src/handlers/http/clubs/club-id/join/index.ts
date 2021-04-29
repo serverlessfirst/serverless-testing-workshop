@@ -13,7 +13,7 @@ export const post = async (event: APIGatewayProxyEventV2) => {
   const { clubId } = event.pathParameters!;
   const user = getUserFromClaims(event.requestContext.authorizer?.jwt.claims!);
 
-  const club = await getClub(clubId);
+  const club = await getClub(clubId!);
   if (!club) {
     return {
       statusCode: 400,

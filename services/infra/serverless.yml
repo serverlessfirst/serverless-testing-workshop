@@ -3,10 +3,10 @@ service: ${self:custom.appName}-infra
 
 provider:
     name: aws
-    region: ${file(../../common/infra/provider-settings.yml):region}
-    runtime: ${file(../../common/infra/provider-settings.yml):runtime}
-    stage: ${file(../../common/infra/provider-settings.yml):stage}
-    logRetentionInDays: ${file(../../common/infra/provider-settings.yml):logRetentionInDays}
+    region: eu-west-1
+    runtime: nodejs12.x
+    stage: ${opt:stage,'dev'}
+    logRetentionInDays: 30
     environment:
         STAGE: ${self:provider.stage}
     stackPolicy:
@@ -26,7 +26,7 @@ provider:
             - Update:Replace
 
 custom:
-    appName: ${file(../../common/infra/provider-settings.yml):appName}
+    appName: TestingWorkshop
     dynamoDbTablePrefix: ${self:custom.appName}-${self:provider.stage}
     snsTopicPrefix: ${self:custom.appName}-${self:provider.stage}
     webpack:
