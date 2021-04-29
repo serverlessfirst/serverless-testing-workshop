@@ -25,7 +25,7 @@ module.exports = {
   testPathIgnorePatterns: [
     '/node_modules/',
     '<rootDir>/dist',
-    '<rootDir>/.webpack',
+    '<rootDir>/.build',
     '<rootDir>/.serverless',
   ],
   setupFilesAfterEnv: [

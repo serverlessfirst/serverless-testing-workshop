@@ -1,6 +1,7 @@
 node_modules
 .serverless
 .webpack
+.build
 dist
 .env
 tmp
