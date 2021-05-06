@@ -80,15 +80,13 @@ What could go wrong with this API endpoint?
         -  Verify that status code 409 is returned and the existing club is unchanged
 
 ### Unit test cases
-- Test happy path of the `POST /clubs` event:
+- Requests with missing data should be rejected:
   - **Arrange** steps:
-    - Mock the event to contain a valid API GW request with all the fields and their values.
-    - Mock the DynamoDB response to be a successful request.
+    - Craft an event to contain an invalid API request so that a required field is missing.
   - **Act** steps:
-    - Call the Lambda handler function with the event.
+    - Invoke the Lambda handler function with the event.
   - **Assert** steps:
-    - Assert that the mocked DynamoDB object is called with the right parameters.
-
+    - Assert that a 400 BAD REQUEST response is returned.
 
 ## Use Case 2: List all Clubs marked as public
 HTTP request: `GET /clubs`
@@ -121,7 +119,6 @@ What could go wrong with this API endpoint?
     - Verify that status code 200 is returned.
     - Verify that the response contains all public clubs
     - Verify that none of the clubs are private.
-
 
 ### Integration test cases
 - Private clubs are not returned
@@ -167,6 +164,8 @@ What could go wrong with this API endpoint?
   - **Assert** steps:
     - Assert that the function does not return private clubs.
     - Assert that the mocked DynamoDB is called with right arguments.
+
+Note: This test case assumes that the public/private filtering is performed in the code and not in the DynamoDB query. Otherwise, it's not adding any value over the integration test that already exists for this case.
 
 ---
 ## Appendix: Test Case Template
