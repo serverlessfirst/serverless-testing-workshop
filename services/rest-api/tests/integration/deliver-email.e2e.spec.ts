@@ -72,7 +72,8 @@ describe('`sqsDeliverEmail` Lambda function', () => {
       }).toHaveLog(expectedLog);
     });
 
-    it('routes permanently failed messages to the correct DLQ [slow]', async () => {
+    // test skipped due to slow run
+    it.skip('routes permanently failed messages to the correct DLQ [slow]', async () => {
       // Arrange: setup bad message
       const subject = `sqsDeliverEmail test 4: ${uuid()}`;
       const originalMessage = getTestEmailRequest(BAD_EMAIL_ADDRESS, subject);
