@@ -65,6 +65,13 @@ npm run infra:deploy
 npm run rest-api:deploy
 ```
 
+## Configuring SES
+One of the test cases requires AWS Simple Email Service in order to send emails. There is a small bit of manual setup required in order to activate SES.
+
+Open `./services/rest-api/serverless.yml` and set the `DEFAULT_FROM_EMAIL` value inside the `environment` section to your email address.
+Then, open the AWS SES console, and click the "Verify a New Email Address" button. Enter your email address here and then open your email inbox to verify the email that AWS has sent you.
+
+![SES Verify Email](./docs/img/aws-ses-verify-email.png)
 
 ### Running tests
 
