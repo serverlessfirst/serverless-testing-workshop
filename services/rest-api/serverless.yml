@@ -61,7 +61,7 @@ functions:
         handler: src/handlers/http/me/clubs/index.get
         events:
         -   httpApi:
-                path: /me/clobs
+                path: /me/clubs
                 method: GET
                 authorizer: ${self:custom.defaultApiAuthorizer}
         iamRoleStatements:
